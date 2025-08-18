@@ -12,7 +12,7 @@
         <pubDate>Mon, 18 Aug 2025 03:58:00 +0800</pubDate>
         
         <guid>http://localhost:1313/blog/2025/nebulagraph-pyg/</guid>
-        <description>&lt;p&gt;这篇文章更像一个“反思录”，记录一下整个 &lt;a class=&#34;link&#34; href=&#34;https://github.com/Fengzdadi/nebula-pyg&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <description>&lt;img src="http://localhost:1313/blog/2025/nebulagraph-pyg/cover.png" alt="Featured image of post NebulaGraph × PyG" /&gt;&lt;p&gt;这篇文章更像一个“反思录”，记录一下整个 &lt;a class=&#34;link&#34; href=&#34;https://github.com/Fengzdadi/nebula-pyg&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;nebula-pyg&lt;/a&gt; 的开发过程。&lt;/p&gt;
 &lt;h2 id=&#34;初逢&#34;&gt;初逢
 &lt;/h2&gt;&lt;p&gt;还是要先感谢 &lt;a class=&#34;link&#34; href=&#34;https://summer-ospp.ac.cn/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
