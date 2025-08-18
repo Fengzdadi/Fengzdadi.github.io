@@ -1,0 +1,33 @@
+<hr style="margin-top: 2rem; border: none; height: 4px;
+    background: linear-gradient(90deg, #ff7a18, #af002d, #319197);">
+
+<div style="text-align:center; margin: .75rem 0 1.5rem; opacity:.8;">
+    Made with ❤️ by Fengze · 2025
+</div>
+
+<style>
+    #backToTop {
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        background: #ff7a18;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: none;
+        font-size: 20px;
+    }
+</style>
+
+<div id="backToTop">↑</div>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.onscroll = function() {
+        btn.style.display = window.scrollY > 200 ? 'block' : 'none';
+    };
+    btn.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>

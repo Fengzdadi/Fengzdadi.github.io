@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+{{/* 简单相册：把当前页面包内的所有图片渲染为响应式网格 */}}
+{{ $images := .Page.Resources.ByType "image" }}
+{{ $cols := .Get "cols" | default 3 }}
+
+<div class="photo-grid cols-{{ $cols }}">
+    {{ range $images }}
+    {{ $thumb := .Fill "800x600 q75 Center" }}  {{/* 生成略缩图，首访会慢一点 */}}
+    <a class="photo" href="{{ .RelPermalink }}" target="_blank" rel="noopener">
+        <img src="{{ $thumb.RelPermalink }}" alt="{{ .Name }}">
+    </a>
+    {{ end }}
+</div>

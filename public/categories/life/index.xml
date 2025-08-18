@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Life on Fengze&#39;s Blog</title>
+        <link>http://localhost:1313/categories/life/</link>
+        <description>Recent content in Life on Fengze&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Fri, 15 Aug 2025 20:00:00 +0800</lastBuildDate><atom:link href="http://localhost:1313/categories/life/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Hello, Stack：本站搭建记录与一些写作碎碎念</title>
+        <link>http://localhost:1313/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/</link>
+        <pubDate>Fri, 15 Aug 2025 20:00:00 +0800</pubDate>
+        
+        <guid>http://localhost:1313/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/</guid>
+        <description>&lt;img src="http://localhost:1313/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/cover.png" alt="Featured image of post Hello, Stack：本站搭建记录与一些写作碎碎念" /&gt;&lt;p&gt;这是本站的第一篇文章，用来记录搭建过程与后续写作规划。&lt;/p&gt;
+&lt;p&gt;虽然&lt;code&gt;Hugo&lt;/code&gt;还是比较方便的，但第一次使用，很多工作也是通过GPT-5了解的，并且这篇文章的大体框架也是GPT帮我定的。
+一开始，总觉得要写一点什么不一样的给这个 Blog 。在GPT-5的建议下，我觉得我得到了统计学概率上的“大家都写什么”，那我就来写点大家都写的内容！&lt;/p&gt;
+&lt;p&gt;如果你喜欢这个Blog风格，希望这篇文章能帮助到你。&lt;/p&gt;
+&lt;h2 id=&#34;为什么选-hugo--stack&#34;&gt;为什么选 Hugo + Stack
+&lt;/h2&gt;&lt;p&gt;先说一下主观上的原因，主流上的Blog方案有hexo，wordpress，Astro，hugo等等。方案真的非常多，但我听到比较多的，就是前两个和hugo了。
+我对hugo有天然好感，一个是因为自己就是大量写go的人；第二个是有段时间在帮朋友维护一个项目的时候，他非常推荐我试试hugo；
+加上我在最终选型的时候发现我最近所在的社区(nebulagraph)的Blog，也是用hugo来写的，好感度一下子就上来了。&lt;/p&gt;
+&lt;p&gt;选择了hugo以后，那就是选择模板的问题了，我比较钟意的有两个，&lt;a class=&#34;link&#34; href=&#34;https://hugoloveit.com/zh-cn/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LoveIt&lt;/a&gt;和&lt;a class=&#34;link&#34; href=&#34;https://stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Stack&lt;/a&gt;
+至于最后为什么选了Stack，可能是我更喜欢这样多层次的观感吧，这个就很缘分了哈哈。&lt;/p&gt;
+&lt;p&gt;以下是GPT-5给我的这个回答：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生成快、维护成本低（纯静态，托管到 GitHub Pages 就能跑）。&lt;/li&gt;
+&lt;li&gt;主题 &lt;strong&gt;Stack&lt;/strong&gt; 外观清爽，支持暗色、目录、搜索、归档、Open Graph 等常用功能。&lt;/li&gt;
+&lt;li&gt;可通过 &lt;code&gt;layouts/partials/head/custom.html&lt;/code&gt; / &lt;code&gt;footer/custom.html&lt;/code&gt; 做&lt;strong&gt;安全的个性化扩展&lt;/strong&gt;（不会改主题源码）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;第一点我还是要插入一嘴的，今天正好和wey-gu老师聊到hugo，他也非常喜欢，和我说他每次用hexo build都非常慢，看来选型做的非常正确。&lt;/p&gt;
+&lt;h2 id=&#34;本站关键配置备忘&#34;&gt;本站关键配置（备忘）
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;配色：莫兰迪风（自定义顶部/底部渐变(我选择了彩色，我希望这是看到最后的一条彩虹🌈)、引用块样式）&lt;/li&gt;
+&lt;li&gt;代码高亮：&lt;code&gt;rose-pine-dawn&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;侧边栏挂件：搜索 / 分类 / 标签云 / 归档&lt;/li&gt;
+&lt;li&gt;日期格式：&lt;code&gt;2006-01-02&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Open Graph：Twitter 卡片 &lt;code&gt;summary_large_image&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;搜索：本地 JSON 索引（&lt;code&gt;[outputs].home = [&amp;quot;HTML&amp;quot;,&amp;quot;RSS&amp;quot;,&amp;quot;JSON&amp;quot;]&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;目录结构：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;post&lt;/code&gt;：长文 / 教程&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;note&lt;/code&gt;：短笔记 / 踩坑记录&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;essay&lt;/code&gt;：随笔 / 感想&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;photos&lt;/code&gt;：摄影集（每个相册一个页面包 + &lt;code&gt;&lt;!DOCTYPE html&gt;
+
+
+
+
+
+&lt;div class=&#34;photo-grid cols-3&#34;&gt;
+    
+      
+    &lt;a class=&#34;photo&#34; href=&#34;http://localhost:1313/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/cover.png&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;
+        &lt;img src=&#34;http://localhost:1313/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/cover_hu_1dd800c86becfe60.png&#34; alt=&#34;cover.png&#34;&gt;
+    &lt;/a&gt;
+    
+&lt;/div&gt;&lt;/code&gt; 短代码）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更具体的分类&#34;&gt;更具体的分类
+&lt;/h2&gt;&lt;p&gt;我是一个刚开始就喜欢想很多的人，也是某种程度上的长期规划吧，大致我会把写的内容分成一下四块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;长文（post）：主要是技术长文，分享一些教程和实践经验，当然我觉得生活也可以出现在这一块，只是我脑中还没比较好的想法。&lt;/li&gt;
+&lt;li&gt;短笔记（note）：这个更像随意的笔记，记录一些想随口说的事情，包括经验和解决方案，或者是一些小技巧，甚至说发发牢骚。&lt;/li&gt;
+&lt;li&gt;随笔（essay）：这就更偏向生活，会记录一些书影音评，或者是一些随想，一些感悟。&lt;/li&gt;
+&lt;li&gt;摄影集（photos）：这个没什么好说的了，只希望自己多拿拿用一次吃土三个月的相机。&lt;/li&gt;
+&lt;/ul&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

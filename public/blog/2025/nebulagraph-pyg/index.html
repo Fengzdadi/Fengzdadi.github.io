@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="这篇文章更像一个“反思录”，记录一下整个 nebula-pyg 的开发过程。\n初逢 还是要先感谢 OSPP 这个平台，让我遇见了 NebulaGraph 社区和 wey-gu老师。\n当然，项目还是需要竞争的，记得最初钟意的项目有 Kwok 的 “为 KWOK 添加 模拟真实 Pod 行为的策略配置”，以及现在就在做的 “NebulaGraph PyG Integration”。\n我是那种非常害怕竞争的人，要面试，讲想法（其实就是太菜了，如果你够了解，对这些东西应该是侃侃而谈的）。 即使我非常想尝试云原生相关的内容，最后因为觉得自己不熟练，放弃了，转而投向我更熟悉的 PyG 。\n现在去查了一下 四月份和 wey-gu老师 交流的邮件，来回总共七封，我竟然写了五封哈哈，其中第一封被错过了，大概十天后进行了 follow-up。得到了回复。 客观点来说，我现在看当时的邮件，感觉我像是早早滚蛋的样子。\n后来加上了X，老师的交流一下子就轻松了很多，简单说明了一下我的想法后，就开始等待第一次的线上交流。\n这次交流也是很意外的一件事哈哈，好像我并没有被通知到具体在几点参加会议，然后立马找了个咖啡厅进去，一脸懵逼的进，一脸懵逼的出。\n交流的时候，发现和我一起参与这个项目的两位也都很厉害，并且其中一位，在后续开发过程中，在一些相关搜索的时候，Google到了。 能通过他的Blog，他在准备的时候也做了好多相关工作。\n那我也是很辛运的一位了!\n（突然想知道为什么是我入选哈哈哈）\n接着就是长时间的等待结果了。录取！\n设计 这个项目的设计，整体上是参考了 KUZU 所做的，给PyG做 remorte 适配的工作。\n大体框架上是相同的，写到后面的一些处理，会因为 nebulagraph 的特性做一些特殊处理。\n框架 总的来说，比较核心的点是实现 PyG 中的 FeatureStore 和 GraphStore 这两个接口。\n在上层，会为实例化这两个接口做一个额外的类，来满足一行代码就能返回两个实例，也就是现在的 NebulaPyG 这个类。 NebulaPyG 这个类还写了一个方法 create_snapshot() 专门解决 vid 问题。\n将 FeatureStore 和 GraphStore 这两个接口中的工具类通用化，放在了 utils.py 和 type_helper.py 的包中。 其中包括对特征的维度判断工具 get_feature_dim()，为产生全局 snapshot 的 scan_all_tag_vids() 等等。\n">
+<title>NebulaGraph × PyG</title>
+
+<link rel='canonical' href='http://localhost:1313/blog/2025/nebulagraph-pyg/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="NebulaGraph × PyG">
+<meta property='og:description' content="这篇文章更像一个“反思录”，记录一下整个 nebula-pyg 的开发过程。\n初逢 还是要先感谢 OSPP 这个平台，让我遇见了 NebulaGraph 社区和 wey-gu老师。\n当然，项目还是需要竞争的，记得最初钟意的项目有 Kwok 的 “为 KWOK 添加 模拟真实 Pod 行为的策略配置”，以及现在就在做的 “NebulaGraph PyG Integration”。\n我是那种非常害怕竞争的人，要面试，讲想法（其实就是太菜了，如果你够了解，对这些东西应该是侃侃而谈的）。 即使我非常想尝试云原生相关的内容，最后因为觉得自己不熟练，放弃了，转而投向我更熟悉的 PyG 。\n现在去查了一下 四月份和 wey-gu老师 交流的邮件，来回总共七封，我竟然写了五封哈哈，其中第一封被错过了，大概十天后进行了 follow-up。得到了回复。 客观点来说，我现在看当时的邮件，感觉我像是早早滚蛋的样子。\n后来加上了X，老师的交流一下子就轻松了很多，简单说明了一下我的想法后，就开始等待第一次的线上交流。\n这次交流也是很意外的一件事哈哈，好像我并没有被通知到具体在几点参加会议，然后立马找了个咖啡厅进去，一脸懵逼的进，一脸懵逼的出。\n交流的时候，发现和我一起参与这个项目的两位也都很厉害，并且其中一位，在后续开发过程中，在一些相关搜索的时候，Google到了。 能通过他的Blog，他在准备的时候也做了好多相关工作。\n那我也是很辛运的一位了!\n（突然想知道为什么是我入选哈哈哈）\n接着就是长时间的等待结果了。录取！\n设计 这个项目的设计，整体上是参考了 KUZU 所做的，给PyG做 remorte 适配的工作。\n大体框架上是相同的，写到后面的一些处理，会因为 nebulagraph 的特性做一些特殊处理。\n框架 总的来说，比较核心的点是实现 PyG 中的 FeatureStore 和 GraphStore 这两个接口。\n在上层，会为实例化这两个接口做一个额外的类，来满足一行代码就能返回两个实例，也就是现在的 NebulaPyG 这个类。 NebulaPyG 这个类还写了一个方法 create_snapshot() 专门解决 vid 问题。\n将 FeatureStore 和 GraphStore 这两个接口中的工具类通用化，放在了 utils.py 和 type_helper.py 的包中。 其中包括对特征的维度判断工具 get_feature_dim()，为产生全局 snapshot 的 scan_all_tag_vids() 等等。\n">
+<meta property='og:url' content='http://localhost:1313/blog/2025/nebulagraph-pyg/'>
+<meta property='og:site_name' content='Fengze&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='NebulaGraph' /><meta property='article:tag' content='PyG' /><meta property='article:tag' content='GNN' /><meta property='article:published_time' content='2025-08-18T03:58:00&#43;08:00'/><meta property='article:modified_time' content='2025-08-18T03:58:00&#43;08:00'/><meta property='og:image' content='http://localhost:1313/blog/2025/nebulagraph-pyg/cover.png' />
+<meta name="twitter:site" content="@fengzecai">
+    <meta name="twitter:creator" content="@fengzecai"><meta name="twitter:title" content="NebulaGraph × PyG">
+<meta name="twitter:description" content="这篇文章更像一个“反思录”，记录一下整个 nebula-pyg 的开发过程。\n初逢 还是要先感谢 OSPP 这个平台，让我遇见了 NebulaGraph 社区和 wey-gu老师。\n当然，项目还是需要竞争的，记得最初钟意的项目有 Kwok 的 “为 KWOK 添加 模拟真实 Pod 行为的策略配置”，以及现在就在做的 “NebulaGraph PyG Integration”。\n我是那种非常害怕竞争的人，要面试，讲想法（其实就是太菜了，如果你够了解，对这些东西应该是侃侃而谈的）。 即使我非常想尝试云原生相关的内容，最后因为觉得自己不熟练，放弃了，转而投向我更熟悉的 PyG 。\n现在去查了一下 四月份和 wey-gu老师 交流的邮件，来回总共七封，我竟然写了五封哈哈，其中第一封被错过了，大概十天后进行了 follow-up。得到了回复。 客观点来说，我现在看当时的邮件，感觉我像是早早滚蛋的样子。\n后来加上了X，老师的交流一下子就轻松了很多，简单说明了一下我的想法后，就开始等待第一次的线上交流。\n这次交流也是很意外的一件事哈哈，好像我并没有被通知到具体在几点参加会议，然后立马找了个咖啡厅进去，一脸懵逼的进，一脸懵逼的出。\n交流的时候，发现和我一起参与这个项目的两位也都很厉害，并且其中一位，在后续开发过程中，在一些相关搜索的时候，Google到了。 能通过他的Blog，他在准备的时候也做了好多相关工作。\n那我也是很辛运的一位了!\n（突然想知道为什么是我入选哈哈哈）\n接着就是长时间的等待结果了。录取！\n设计 这个项目的设计，整体上是参考了 KUZU 所做的，给PyG做 remorte 适配的工作。\n大体框架上是相同的，写到后面的一些处理，会因为 nebulagraph 的特性做一些特殊处理。\n框架 总的来说，比较核心的点是实现 PyG 中的 FeatureStore 和 GraphStore 这两个接口。\n在上层，会为实例化这两个接口做一个额外的类，来满足一行代码就能返回两个实例，也就是现在的 NebulaPyG 这个类。 NebulaPyG 这个类还写了一个方法 create_snapshot() 专门解决 vid 问题。\n将 FeatureStore 和 GraphStore 这两个接口中的工具类通用化，放在了 utils.py 和 type_helper.py 的包中。 其中包括对特征的维度判断工具 get_feature_dim()，为产生全局 snapshot 的 scan_all_tag_vids() 等等。\n"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='http://localhost:1313/blog/2025/nebulagraph-pyg/cover.png' />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
+
+<style>
+    :root {
+        --article-font-family: "Merriweather", var(--base-font-family);
+    }
+</style>
+
+<style>
+     
+    blockquote {
+        border-left: 4px solid #a3a59b;  
+        padding-left: 1rem;
+        background: rgba(163, 165, 155, 0.08);  
+        font-style: italic;
+        color: #555;
+    }
+</style>
+
+
+<div style="
+  border-top: 5px solid transparent;
+  border-image: linear-gradient(to right, #c8c2bc, #b6b0a9, #a3a59b) 1;
+"></div>
+
+<style>
+     
+    .photo-grid { display: grid; gap: 12px; }
+    .photo-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .photo-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .photo-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 900px) {
+        .photo-grid.cols-3, .photo-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    .photo-grid .photo img {
+        width: 100%; height: auto; display: block; border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+         
+        filter: saturate(0.92) hue-rotate(-6deg);
+    }
+    .photo-grid .photo:hover img {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    .albums {
+        display: grid; gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 1024px) { .albums { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .albums { grid-template-columns: 1fr; } }
+    .album-card {
+        border-radius: 14px; overflow: hidden; display: block; text-decoration: none;
+        background: #f4f2ef;  
+        box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+    }
+    .album-card img { width: 100%; height: auto; display: block; }
+    .album-meta { padding: 12px 14px; }
+    .album-meta h3 { margin: 0 0 4px; color: #444; }
+    .album-meta .muted { color: #7a7a7a; font-size: .9rem; }
+</style>
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_ce0998b4578d41af.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🤔</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Fengze&#39;s Blog</a></h1>
+            <h2 class="site-description">一生一次少年游</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M590.624 950.481v-261.76h-156.92v262.021h-7.169c-75.027 0-150.054 0.014-225.081-0.008-26.163-0.008-42.731-18.607-42.733-47.9-0.002-106.427 0.047-212.855-0.107-319.282-0.01-6.082 1.72-9.945 5.908-13.788 114.58-105.085 229.054-210.323 343.55-315.526 1.243-1.14 2.556-2.18 4.156-3.54 16.806 15.435 33.502 30.747 50.177 46.086C661.723 388.136 761.02 479.51 860.41 570.757c3.503 3.216 4.992 6.453 4.988 11.519-0.11 107.568-0.036 215.134-0.111 322.702-0.019 26.257-17.041 45.644-40.45 45.697-76.663 0.172-153.325 0.066-229.987 0.055-1.192 0-2.386-0.135-4.226-0.249z"  /><path fill="#8a8a8a" d="M511.97 190.317c-38.127 35.441-75.794 70.457-113.464 105.468C295.984 391.063 193.467 486.35 90.923 581.599c-12.757 11.847-23.113 10.808-33.798-3.239-11.236-14.77-22.445-29.566-33.556-44.453-9.033-12.105-8.037-24.68 2.718-34.67 146.19-135.803 292.377-271.611 438.617-407.346 27.331-25.37 67.37-24.792 95.408 1.213 37.397 34.684 74.69 69.508 112.033 104.264 11.58 10.777 23.179 21.526 36 33.432v-8.517c0-40.573-0.011-49.643 0-90.215 0.005-17.322 6.864-24.944 22.456-24.952 36.803-0.015 73.607-0.008 110.41-0.015 17.612-0.001 24.102 7.155 24.103 26.676 0.007 88.665 0.064 145.83-0.132 234.496-0.015 6.12 1.76 9.976 5.863 13.756 42.245 38.876 84.356 77.932 126.506 116.937 10.804 9.998 11.996 22.402 2.994 34.564-11.577 15.643-23.262 31.188-35.097 46.585-9.183 11.946-20.214 12.846-31.132 2.699-93.098-86.52-186.168-173.075-279.245-259.622-46.46-43.202-92.916-86.41-139.378-129.611-1.08-1.004-2.21-1.943-3.723-3.264z"  /></svg>
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M923.26 901.592H101.003c-8.49 0-15.71-6.235-16.93-14.64L9.448 376.806a17.157 17.157 0 0 1 3.978-13.671 17.146 17.146 0 0 1 12.953-5.916H997.9c4.964 0 9.693 2.155 12.953 5.916a17.157 17.157 0 0 1 3.977 13.67l-74.64 510.145c-1.22 8.406-8.44 14.64-16.93 14.64z m-807.466-34.228H908.47l69.626-475.917H46.185l69.609 475.917z m791.522-547.681c-9.46 0-17.114-7.655-17.114-17.115v-31.571c0-8.707-7.487-15.778-16.696-15.778H316.851a17.09 17.09 0 0 1-16.112-11.365c-14.473-40.529-32.974-79.603-41.849-88.778H153.9c-9.21 0-16.713 7.069-16.713 15.76v131.73c0 9.46-7.655 17.115-17.115 17.115-9.46 0-17.114-7.654-17.114-17.114V170.838c0-27.56 22.846-49.988 50.94-49.988h108.6c8.858 0 29.198 0 66.334 100.144h544.673c28.078 0 50.923 22.43 50.923 50.005v31.571c0.002 9.458-7.653 17.113-17.112 17.113z"  /><path fill="#8a8a8a" d="M660.3 563.959H326.543c-9.46 0-17.115-7.655-17.115-17.115s7.655-17.114 17.115-17.114H660.3c9.46 0 17.115 7.654 17.115 17.114s-7.655 17.115-17.114 17.115z"  /></svg>
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/link/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M330.44 727.39c-7.686 0-15.339-2.905-21.213-8.779-11.715-11.715-11.715-30.71 0-42.425l363.331-366.174c11.715-11.715 30.679-11.715 42.394 0s11.715 30.71 0 42.425L351.621 718.611c-5.811 5.873-13.496 8.779-21.181 8.779z m147.707-72.666c9.904 43.706-0.781 86.6-34.553 120.371l-121.12 117.372c-25.493 25.493-59.358 39.519-95.441 39.519-36.052 0-69.948-14.027-95.409-39.519-52.61-52.641-52.61-138.272-0.312-190.569L249.621 579.84c25.493-25.492 59.389-39.551 95.441-39.551 12.34 0 24.18 2.218 35.77 5.405l46.83-46.83c-26.118-12.216-54.328-18.557-82.601-18.557-49.892 0-99.783 19.026-137.866 57.108L89.167 659.192c-76.134 76.134-76.134 199.536 0 275.701 38.051 38.082 87.943 57.077 137.835 57.077 49.892 0 99.783-18.995 137.835-57.077l120.871-117.122c58.202-58.202 70.823-139.365 39.957-210.594l-47.517 47.548zM934.826 89.108C896.744 51.026 846.883 32 796.991 32s-99.815 19.026-137.866 57.108l-120.84 117.091c-60.357 60.357-72.667 150.394-37.301 223.091l46.549-46.518c-13.777-46.018-3.218-97.784 32.865-133.867l121.12-117.372c25.493-25.462 59.358-39.519 95.441-39.519 36.021 0 69.948 14.059 95.441 39.519 52.61 52.641 52.61 138.272 0.281 190.6l-121.12 121.12c-25.493 25.493-59.389 39.519-95.441 39.519-9.185 0-17.276 0.906-26.086-0.875l-47.768 47.798c23.868 9.904 48.392 13.058 73.853 13.058 49.892 0 99.752-19.026 137.835-57.108l120.84-120.84c76.165-76.134 76.165-199.567 0.031-275.701z"  /></svg>
+                
+                <span>Link</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M937.728 838.554l-214.22-216.018c-2.494-2.5-5.249-4.409-7.88-6.488 36.187-55.987 57.317-122.675 57.317-194.508 0-197.347-158.627-357.303-354.43-357.303-195.694 0-354.43 159.957-354.43 357.303 0 197.374 158.736 357.295 354.43 357.295 71.227 0 137.455-21.358 193.076-57.846 2.026 2.714 3.884 5.413 6.337 7.893l214.248 216.045c14.628 14.703 33.678 22.032 52.757 22.032 19.091 0 38.155-7.328 52.77-21.998 29.103-29.409 29.103-77.02 0.025-106.407M418.515 666.008c-133.681 0-242.499-109.685-242.499-244.468 0-134.763 108.819-244.476 242.499-244.476S661.014 286.777 661.014 421.54c0 134.782-108.819 244.468-242.5 244.468"  /></svg>
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/photos/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1755274928559" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3519" data-spm-anchor-id="a313x.search_index.0.i1.67653a81omMHpD" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M895.473765 127.981836 127.937834 127.981836c-35.322483 0-63.956637 28.634154-63.956637 63.956637l0 639.614469c0 35.322483 28.634154 63.956637 63.956637 63.956637l767.535931 0c35.322483 0 63.956637-28.634154 63.956637-63.956637L959.430402 191.938474C959.430402 156.61599 930.796248 127.981836 895.473765 127.981836zM159.66442 191.942567l704.08276 0c17.520025 0 31.722492 14.202467 31.722492 31.722492l0 390.218376L684.703387 393.113309c-6.221702-6.221702-14.383592-9.31618-22.538319-9.28855-8.153704-0.027629-16.316617 3.067872-22.538319 9.28855L409.426857 632.757295l-103.836927-51.628868c-5.464455-3.684926-11.663644-5.438872-17.792225-5.421476-8.138354-0.01535-16.281825 3.080152-22.491247 9.289574L127.941927 722.361055 127.941927 223.665059C127.941927 206.145034 142.144394 191.942567 159.66442 191.942567zM895.469672 799.826358c0 17.520025-14.202467 31.722492-31.722492 31.722492L159.66442 831.54885c-13.644765 0-25.27464-8.616238-29.753651-20.702508l164.476005-164.476005 102.55984 50.993394c5.669116 4.225231 12.426007 6.310729 19.172665 6.257517 9.833973 0.068562 19.518542-4.426823 25.742291-12.844539L664.9853 458.208886l230.484372 236.126882L895.469672 799.826358z" p-id="3520" fill="#8a8a8a"></path><path d="M287.843754 447.784466c52.986795 0 95.941096-42.954301 95.941096-95.941096s-42.954301-95.941096-95.941096-95.941096c-52.986795 0-95.941096 42.954301-95.941096 95.941096S234.856959 447.784466 287.843754 447.784466zM287.843754 319.863005c17.662265 0 31.980365 14.3181 31.980365 31.980365s-14.3181 31.980365-31.980365 31.980365c-17.662265 0-31.980365-14.3181-31.980365-31.980365S270.181489 319.863005 287.843754 319.863005z" p-id="3521" fill="#8a8a8a"></path></svg>
+                
+                <span>Photos</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#初逢">初逢</a></li>
+    <li><a href="#设计">设计</a></li>
+    <li><a href="#框架">框架</a></li>
+    <li><a href="#细节">细节</a>
+      <ul>
+        <li><a href="#环境">环境</a></li>
+        <li><a href="#vid">vid</a></li>
+        <li><a href="#featurestore-的扫描策略">FeatureStore 的扫描策略</a></li>
+        <li><a href="#get_tensor-中的-xy-处理">get_tensor 中的 x,y 处理</a></li>
+        <li><a href="#多进程处理">多进程处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#余音">余音</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
+  <circle cx="9" cy="9" r="2" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">Tags</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/tags/blog/" class="font_size_1">
+                Blog
+            </a>
+        
+            <a href="/tags/gnn/" class="font_size_1">
+                GNN
+            </a>
+        
+            <a href="/tags/hugo/" class="font_size_1">
+                Hugo
+            </a>
+        
+            <a href="/tags/nebulagraph/" class="font_size_1">
+                NebulaGraph
+            </a>
+        
+            <a href="/tags/pyg/" class="font_size_1">
+                PyG
+            </a>
+        
+            <a href="/tags/stack/" class="font_size_1">
+                Stack
+            </a>
+        
+    </div>
+</section>
+            
+        
+            
+                <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Archives</h2>
+
+        
+        
+        
+        
+        
+        <div class="widget-archive--list">
+            <div class="archives-year">
+                    <a href="/archives/#2025">
+                        
+                            <span class="year">2025</span>
+                            <span class="count">2</span>
+                        
+                    </a> 
+                </div>
+            
+        </div>
+    </section>
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/blog/2025/nebulagraph-pyg/">
+                <img src="/blog/2025/nebulagraph-pyg/cover_hu_4218c40491e7629.png"
+                        srcset="/blog/2025/nebulagraph-pyg/cover_hu_4218c40491e7629.png 800w, /blog/2025/nebulagraph-pyg/cover_hu_f5cfa9066503d31e.png 1600w"
+                        width="800" 
+                        height="533" 
+                        loading="lazy"
+                        alt="Featured image of post NebulaGraph × PyG" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/tech/" >
+                Tech
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/2025/nebulagraph-pyg/">NebulaGraph × PyG</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-08-18</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>这篇文章更像一个“反思录”，记录一下整个 <a class="link" href="https://github.com/Fengzdadi/nebula-pyg"  target="_blank" rel="noopener"
+    >nebula-pyg</a> 的开发过程。</p>
+<h2 id="初逢">初逢
+</h2><p>还是要先感谢 <a class="link" href="https://summer-ospp.ac.cn/"  target="_blank" rel="noopener"
+    >OSPP</a> 这个平台，让我遇见了 NebulaGraph 社区和 wey-gu老师。</p>
+<p>当然，项目还是需要竞争的，记得最初钟意的项目有 Kwok 的 “为 KWOK 添加 模拟真实 Pod 行为的策略配置”，以及现在就在做的
+“NebulaGraph PyG Integration”。</p>
+<p>我是那种非常害怕竞争的人，要面试，讲想法（其实就是太菜了，如果你够了解，对这些东西应该是侃侃而谈的）。
+即使我非常想尝试云原生相关的内容，最后因为觉得自己不熟练，放弃了，转而投向我更熟悉的 PyG 。</p>
+<p>现在去查了一下 四月份和 wey-gu老师 交流的邮件，来回总共七封，我竟然写了五封哈哈，其中第一封被错过了，大概十天后进行了 follow-up。得到了回复。
+客观点来说，我现在看当时的邮件，感觉我像是早早滚蛋的样子。</p>
+<p>后来加上了X，老师的交流一下子就轻松了很多，简单说明了一下我的想法后，就开始等待第一次的线上交流。</p>
+<p>这次交流也是很意外的一件事哈哈，好像我并没有被通知到具体在几点参加会议，然后立马找了个咖啡厅进去，一脸懵逼的进，一脸懵逼的出。</p>
+<p>交流的时候，发现和我一起参与这个项目的两位也都很厉害，并且其中一位，在后续开发过程中，在一些相关搜索的时候，Google到了。
+能通过他的Blog，他在准备的时候也做了好多相关工作。</p>
+<p>那我也是很辛运的一位了!</p>
+<p>（突然想知道为什么是我入选哈哈哈）</p>
+<p>接着就是长时间的等待结果了。录取！</p>
+<h2 id="设计">设计
+</h2><p>这个项目的设计，整体上是参考了 <a class="link" href="https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/"  target="_blank" rel="noopener"
+    >KUZU</a> 所做的，给PyG做 remorte 适配的工作。</p>
+<p>大体框架上是相同的，写到后面的一些处理，会因为 nebulagraph 的特性做一些特殊处理。</p>
+<h2 id="框架">框架
+</h2><p>总的来说，比较核心的点是实现 PyG 中的 <code>FeatureStore</code> 和 <code>GraphStore</code> 这两个接口。</p>
+<p>在上层，会为实例化这两个接口做一个额外的类，来满足一行代码就能返回两个实例，也就是现在的 <code>NebulaPyG</code> 这个类。
+<code>NebulaPyG</code> 这个类还写了一个方法 <code>create_snapshot()</code> 专门解决 <a class="link" href="#vid" >vid</a> 问题。</p>
+<p>将 <code>FeatureStore</code> 和 <code>GraphStore</code> 这两个接口中的工具类通用化，放在了 utils.py 和 type_helper.py 的包中。
+其中包括对特征的维度判断工具 <code>get_feature_dim()</code>，为产生全局 snapshot 的 <code>scan_all_tag_vids()</code> 等等。</p>
+<p>同时引入了一个 <code>base_store</code>，给 <code>FeatureStore</code> 和 <code>GraphStore</code> 来继承，来专门处理 PyG 中的 <code>DataLoader</code> 中的 <a class="link" href="#%e5%a4%9a%e8%bf%9b%e7%a8%8b%e5%a4%84%e7%90%86" >多进程问题</a>。</p>
+<p>以下是整体上的类关系图。</p>
+<p><img src="/blog/2025/nebulagraph-pyg/1_overview_of_nebula-pyg_class_relationships.png"
+	width="3840"
+	height="2592"
+	srcset="/blog/2025/nebulagraph-pyg/1_overview_of_nebula-pyg_class_relationships_hu_c5d9d653c32a2341.png 480w, /blog/2025/nebulagraph-pyg/1_overview_of_nebula-pyg_class_relationships_hu_75a3f6c60855495d.png 1024w"
+	loading="lazy"
+	
+		alt="1_overview_of_nebula-pyg_class_relationships.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="148"
+		data-flex-basis="355px"
+	
+></p>
+<h2 id="细节">细节
+</h2><h3 id="环境">环境
+</h3><p>这是在开发 nebula-pyg 前遇到的一个很重大的问题。第一次发现自己对环境这么不熟练。</p>
+<p>第一个是环境管理，nebula-python 选用的是 <a class="link" href="https://pdm-project.org/en/latest/"  target="_blank" rel="noopener"
+    >pdm</a>，一个相对不错的包管理工具。
+为什么说相对不错呢？</p>
+<ol>
+<li>pdm 并没有让我体会到方便，里面还是有挺多坑的。其最主要的功能还是弥补了传统的 <code>venv</code> 等等没有的，依赖包的版本一致性问题（比如 nebula-pyg 依赖 A 包，A 包依赖 B 包，传统的 <code>venv</code> 能指定 A 包的版本，但不能指定 B 包的版本，就会容易出现 A1 依赖 B 的 <code>X.1-X.2</code> 版本，A2 依赖 B 的 <code>X.2-X.3</code> 版本，这个时候 pdm 就能发挥作用把的 B 指定为 <code>x.2</code> 版本）。这个功能可能因为我并不是多端协作开发，暂时没有深刻体会到。</li>
+<li>pdm 对 torch 的支持我觉得很一般，要自己进行配置，而且像 <code>torch-vision</code> 之类的包，确实出了很奇怪的安装意外。印象中这个问题可能普便存在，之前使用 <code>miniconda</code> 也出现过类似的问题。</li>
+<li>经过调研，和 wey-gu 老师的讨论，现在 uv 差不多要一统天下了（哪天我也去试试）。</li>
+</ol>
+<p>第二个便是 nebulagraph 的环境。用 nebula-pyg 一个很重要的前提就是，storaged 可以被 python interpretation 直接访问，即两者需要在同一网络下。</p>
+<p>问题就出在了，目前社区版的 nebulagraph 并不支持这个功能。并且 nebulagraph 仅能在 <a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/4.deployment-and-installation/1.resource-preparations/#_4"  target="_blank" rel="noopener"
+    >指定的 linux 环境下安装</a>。</p>
+<p>那用户使用 nebula-pyg就有两种情况：</p>
+<ol>
+<li>使用 特定的 linux 系统，并在该环境下安装了 nebulagraph，解释器也运行在本地。</li>
+<li>使用 docker-compose 来启动 nebula-graph，然后将 python解释器 安装在同一网络中，通过 ssh 进行开发或者使用。注意：并不是很推荐使用 WSL，因为 WSL 存在严重的IO问题（wey-gu老师提醒的，并且在后续实践中确实出现了这个导致的 storaged 崩坏问题，以及文件的读写问题）</li>
+</ol>
+<p>当然，以上推荐方式1。</p>
+<h3 id="vid">vid
+</h3><p>nebulagraph 的 <a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/1.introduction/3.vid/"  target="_blank" rel="noopener"
+    >VID</a> 支持 <code>FIXED_STRING(&lt;N&gt;)</code> 和 <code>INT64</code> 两种类型。
+而 PyG，对 edge_index 有 <code>{0,……，num_nodes-1}</code> 的<a class="link" href="https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html?highlight=only&#43;hold&#43;indice&#43;range#:~:text=Note%20that%20it%20is%20necessary%20that%20the%20elements%20in%20edge_index%20only%20hold%20indices%20in%20the%20range%20%7B%200%2C%20...%2C%20num_nodes%20%2D%201%7D."  target="_blank" rel="noopener"
+    >要求</a></p>
+<p>那这个转换到底要不要做呢，在 KUZU 的实现中，这个要求被留给了用户，用户在导入数据的时候，要求 index 必须满足上面的要求。
+现在反思过来看，这个问题交给用户，也是一个不错的方案。在后续测试的大多数数据集中，index 都被限制在了这个范围。</p>
+<p>不过对于工业级别的数据，大多数都是基于一定规则的 uuid，或者基于 snowflake 生成的 id。特别是在分布式数据库中，大部分情况不会是自增的int。这个时候，VID 的映射就特别有必要了</p>
+<p>在设计映射方案的时候，曾考虑过 KV-Cache，经过 wey-gu 老师的建议，主要结合了两个点：</p>
+<ol>
+<li>考不考虑动态场景？这个的回答是不太需要，即使是工业级别，snapshot 做一个 subgraph，速度还是非常快的。</li>
+<li>删除 tag 的时候连续序号需要怎么处理？这个在 KV-Cache 中非常难处理。</li>
+</ol>
+<p>综合以上，采用了 Snapshot这个方案（go snapshot！），并使用 python 原生的 pickle 进行持久化。</p>
+<p>snapshot 产生的 pickle 文件 会包含有一下几个内容：</p>
+<ul>
+<li><code>vid_to_idx</code></li>
+<li><code>idx_to_vid</code></li>
+<li><code>vid_to_tag</code>：节点分类信息</li>
+<li><code>edge_type_groups</code>：三元组信息</li>
+</ul>
+<p>前面两个看似重复的反向设计并不是冗余，而是 dict 里面的 KV 对正向的查询更快，时间复杂度应该是 O(1)，如果在想通过 idx 去找 vid 的时候仅仅用 <code>vid_to_idx</code> ，时间复杂度就会到达 O(n)。</p>
+<h3 id="featurestore-的扫描策略">FeatureStore 的扫描策略
+</h3><p>大概在8月初的时候，我用了 nebulagraph 文档<a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/nebula-studio/quick-start/st-ug-plan-schema/#schema"  target="_blank" rel="noopener"
+    >规划 Schema</a>部分的示例数据集中的 basketballplayer 做完了所有的测试。
+当全部测试跑通了以后，非常开心，已经早早的做下一步规划了。</p>
+<p>噩梦出现在决定做一个大规模数据集的案例。</p>
+<p>当时选用的是<a class="link" href="https://ogb.stanford.edu/docs/nodeprop/#ogbn-products"  target="_blank" rel="noopener"
+    >ogbn-products</a>，我认为一个非常经典的例子。当我挂起他的时候，过了约莫一小时，并没有什么动静。
+在当时的我看来应该是性能问题，可能会考虑到 WSL I/O，以及自己电脑性能。</p>
+<p>在出去玩完约莫七个小时回到家后，看到还是一成不变的进度，我惊呆了，2,449,029个 NODE 在我印象中并不会出现这么严重的性能问题，七个小时都读不完。
+但我仍对数据集大小保持怀疑态度，于是，使用了<a class="link" href="https://ogb.stanford.edu/docs/nodeprop/#ogbn-arxiv"  target="_blank" rel="noopener"
+    >ogbn-arxiv</a>。并进行断点打印。
+发现在读取数据中进行了无数轮次的<code>scan_vertex_async</code>。那这是怎回事？</p>
+<p>我最初对 <code>get_tensor</code> 的设计是调用 storaged 的 <code>scan_vertex_async</code>(这个接口也是我 PR 到 nebula-python 中的，好像暂时没有更新)。
+这个接口做的工作是对图进行全局扫描，获得全局数据中指定 tag 的指定 prop。但它少了一个功能，就是获取指定 index 中的点。我在设计中对这个点的处理是，通过比较所需的 index 和 scan 出来的全图的点，
+再将所需要点的 prop 进行返回。</p>
+<p>我们来重新理一下流程，就知道，到底是什么地方出问题了。PyG 在使用 <code>Neighborloader</code> 会先获取点的列表，根据 batch_size 这个参数，加载周围的点。
+例如 <code>batch_size = 32</code>。那就会从点的 List 里面获取 32 个点，然后再获取这 32 个点的邻点，将这些点作为一个 index，调用 <code>get_tensor</code>。</p>
+<p>在 ogbn-arxiv 中，这个数量大约为 600 多个。<em>进行 <code>get_tensor</code> 的次数一般由 feat 数量(这是我踩的另外一个坑<a class="link" href="#get_tensor-%e4%b8%ad%e7%9a%84-xy-%e5%a4%84%e7%90%86" >get_tensor 中的 x,y 处理</a>)，和进行几轮epoch，几次batch训练决定的。</em>
+所以使用 <code>scan_vertex_async</code> 这样的全局扫描接口，从数据集中获取数据，每次都会扫描出 169,343 Node，和实际仅需的 600 多个 Node 进行比较一下就会发现，这是性能上的极大浪费。</p>
+<p>这时，我们来比较一下 KUZU的处理方式 和 wey-gu 老师之前为 dgl 写的 <a class="link" href="https://github.com/wey-gu/nebula-dgl"  target="_blank" rel="noopener"
+    >nebula-dgl</a>（刚刚才仔细的看了一下，之前只知道有这个项目哈哈哈）：</p>
+<ol>
+<li>KUZU: KUZU 很干脆，他的 <code>scan_vertex</code> 函数中，有 indices 这个参数，能直接根据 indices(index) 直接从 storage 中获取指定 indice 的 prop。</li>
+<li>nebula-dgl：一般在训练的时候，dgl 会 scan 全图，读取data，生成这个图对象，之后的操作都是默认从图对象 g.ndata/edata 里按需切片。所以并不是涉及和 PyG 类似的频繁的读写。(这里觉得要是早点看到，也可以知道有query这个方案去针对小图，子图了)</li>
+</ol>
+<p>对于方案一，我是觉得非常方便，只需要在 nebulagraph 的 stroaged 中加入一个算子即可。但这个方案被直接否决了。
+反思一下，我记得不太清楚，wey-gu老师和我说的是 storaged 只适合做全图扫描，并不适合做条件查询。</p>
+<p>经过一些资料查证，首先是，nebulagraph 的 storaged 是基于 RocksDB（PS：有空可以研究一下 RocksDB！），有天然的顺序读（iterator）方案，直接具有全图遍历的功能。
+第二个是，如果想实现这个功能，至少要做谓词求值、联合条件、选择最佳索引、回表取属性、聚合/去重/排序这些事情，从职责上来讲，这些都是 query 优化器的工作，最终还是应该由 graphd 来做。</p>
+<p>那最后也是在 wey-gu 老师的建议下，选择了 ngql 进行相关操作，并且 wey-gu老师有说，nebulagraph 对我描述的操作做了进一步的优化。
+通过后续的测试发现也是，在 100,000 个级别的点 fetch 中，能够在1.2-1.5s之内返回所有数据。</p>
+<p>最终的解决方案也很简单，使用 <a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/7.general-query-statements/4.fetch/"  target="_blank" rel="noopener"
+    >fetch</a> 语句查询即可。
+当然，还有 <a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/7.general-query-statements/2.match/"  target="_blank" rel="noopener"
+    >match</a> 方法。
+match 更强大，比如能处理多跳子图等功能，但在性能上弱于<code>fetch</code>，并且没有其他功能的需求，只是根据 <code>index</code> 获取点的属性值，因此还是选用了<code>fetch</code>。</p>
+<h3 id="get_tensor-中的-xy-处理">get_tensor 中的 x,y 处理
+</h3><p>这个也是最初没有考虑到的问题。</p>
+<p>上面说的：</p>
+<blockquote>
+<p>进行 <code>get_tensor</code> 的数量一般由 feat 数量……决定的。</p></blockquote>
+<p>是因为在训练过程中，PyG 都会根据 <code>get_all_tensor_attrs</code> 来获取属性列表，根据这个列表，在每一组 epoch 的每一次 batch 中都要对每一个存在于属性列表中的属性进行 <code>get_tensor</code> 操作。
+比如在 ogbn-arxiv 中，有 feat0，feat1 …… feat128， 这样 128 个属性列 和 label 标签列。
+PyG就会使用 128+1 次的 <code>get_tensor(attr=TensorAttr(group_name=&quot;paper&quot;, attr_name=&quot;feat0&quot;, index=...))</code> 进行特征/属性的获取。</p>
+<p>在上个部分，我每次都能看到 大约100多次训练以后就报错，我就开始怀疑，是 attr 部分的问题。因为 PyG 的模型训练，会要求存在 <code>data.x</code> 和 <code>data.y</code>。
+但我并没有，我只有 feat0-feat128 和 label 列。</p>
+<p>那现在的任务就变成了 需要将 feat0-feat128 变为 <code>data.x</code>，label 列变为 <code>data.y</code>。</p>
+<p>（看别人的处理方法真的能学到很多）</p>
+<p>我看了 KUZU 对这个问题的解决方法，其实就是没有方法哈哈哈。因为其要求用户导入的特征数据就为<a class="link" href="https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/#:~:text=x%3A%20128%2Ddimensional%20node%20features%20%28so%20128%2Dsize%20float%20tensors%29"  target="_blank" rel="noopener"
+    >多维度的 tensor float 类型</a>（应该是 vector 了）。</p>
+<p>这个问题现在就很明朗了，这个问题需要自己解决。因为 nebulagraph 并不支持 vector，更糟糕的是，也不支持<a class="link" href="https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/3.data-types/6.list/#:~:text=%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BE%8B%E5%A6%82%20List%E3%80%81Set%E3%80%81Map%EF%BC%89%E4%B8%8D%E8%83%BD%E5%AD%98%E5%82%A8%E4%B8%BA%E7%82%B9%E6%88%96%E8%BE%B9%E7%9A%84%E5%B1%9E%E6%80%A7%E3%80%82"  target="_blank" rel="noopener"
+    >复合数据类型</a>（例如 List、Set、Map）。</p>
+<p>所以在存数据的时候，和原来一样，还是 feat0-feat128 拥有 128列 的特征向量。</p>
+<p>那第一个问题，就是这个 <code>feature</code> 的合成以及 <code>label</code> 的转换过程是由 nebula-pyg 来处理，还是用户自行处理。</p>
+<p>先来处理简单的，也就是 label。这个我觉得 nebula-pyg 处理并不会很复杂，并且可以帮用户直接解决。</p>
+<p>为此，我引入了 <code>Y_CANDIDATES</code> 这个常量，默认了 <code>label</code>，<code>y</code>，<code>target</code>，<code>category</code> 这几个标签为 <code>data.y</code> 的标签。
+在读取的过程中，能够直接将这个几个标签的特征量转换为 <code>data.y</code>。</p>
+<p>接下来就是 <code>feature</code> 的处理了。这里同样是交给用户还是 nebula-pyg 来解决的问题。主要考虑的点有以下几个：</p>
+<ol>
+<li>在我的经验，如果一些特征是经过特殊处理的，这些特殊处理的特征，很可能就是需要进行相当量的消融实验，而用户在拼接的过程中，只需要从 <code>data.x = [data.feat0,……，data.feat128]</code> 中删除不需要的列即可。</li>
+<li>要用户自己进行拼接，即要用户多写两行代码，从使用体验上来说会非常的不佳。</li>
+</ol>
+<p>既然两者都好，那就两者都要！</p>
+<p>那我们就需要进行一个模式区分，我引入了 <code>expose</code> 这个参数，有两个 mode，<code>x</code> 和 <code>feats</code>，默认为 <code>x</code>。当用户需要自行处理特征的时候，即可使用 <code>feats</code>。</p>
+<p><code>x</code> 模式下的主要处理大致为，当调用 <code>get_all_tensor_attrs</code> 会生成一个含有所有 <code>feat</code> 的 <code>dict</code>，并只返回 <code>x</code>, <code>y</code>。当 PyG 接收到 <code>x</code> 后，会用这个 <code>x</code> 作为调用 <code>get_tensor</code> 的 <code>attr.attr_name</code> 的参数，
+<code>get_tensor</code> 会自行进行识别，并读取之前所说的 <code>dict</code>，然后一次返回含有所有 <code>feat</code> 的 <code>data.x</code>。</p>
+<p>（2:26am，作息真的很爆炸了，已经盖上电脑20min了，然后又把它打开，想一次性写完）</p>
+<h3 id="多进程处理">多进程处理
+</h3><p>这一段内容其实也很长，我在完成这个事情的时候，觉得很值得，为此直接写了一篇doc，专门介绍这一部分内容，详细可以看 <a class="link" href="https://github.com/Fengzdadi/nebula-pyg/blob/main/doc/Multi-process/Multi-process_zh-CN.md"  target="_blank" rel="noopener"
+    >Multi-process description</a>
+这里的 blog 也主要讲述的是心路历程，而不重在具体的解决细节。</p>
+<p>还记得 <a class="link" href="#featurestore-%e7%9a%84%e6%89%ab%e6%8f%8f%e7%ad%96%e7%95%a5" >FeatureStore 的扫描策略</a> 这一部分引入了 <code>query</code> 嘛。怎么说呢，这个工作真的给我带来了很大的麻烦。
+一个问题的引入，引出了三个工程量都非常大的问题，<a class="link" href="#featurestore-%e7%9a%84%e6%89%ab%e6%8f%8f%e7%ad%96%e7%95%a5" >FeatureStore 的扫描策略</a>，<a class="link" href="#get_tensor-%e4%b8%ad%e7%9a%84-xy-%e5%a4%84%e7%90%86" >get_tensor 中的 x,y 处理</a> 和当下这个。</p>
+<p>印象中，引出这个问题的时候，是当我把 <code>num_workers</code> 设置为非1，<code>query</code> 的 <code>resp</code> 就出现了各种串位。</p>
+<p>继续来讲问题的原因，在代码中，<code>query</code> 是被 <code>session</code>（<code>graph client</code> or <code>gclient</code>）执行的。而 PyG 的 <code>DataLoader</code> 的 <code>num_workers</code> 参数是可以开启多进程读数据的。此时，session 的独立性就尤为重要。</p>
+<p>nebulagraph 的 <code>session</code> 并不安全，即使 nebula-python 还专门实现了 <code>session_pool</code>，很可惜但也不可惜，可惜的是，wey-gu老师说这个<code>session_pool</code>也不安全；不可惜的是，这是在我做完这部分工作以后才发现的，我也不想工作白费哈哈哈。</p>
+<p>最初的设计里，用户仅需初始化一个 gclient（连 graphd）和 sclient（连 storaged），后续所有的操作都是通过这两个对象。
+这个问题前面不涉及频繁 <code>query</code> 的时候并没有出现，因为之前的 <code>scan</code> 全图，少说也要十几秒一次，并且每次的 <code>resp</code> 都是相同的，即使串位了也无所谓。</p>
+<p>那问题解决的细节，我在此就不赘述，详细内容都在上面的 doc 中。我大概的提一下几个比较值得关注的点：</p>
+<ol>
+<li>PyTorch 中的 <code>DataLoader</code> 是有 <strong>Fork</strong> 和 <strong>Spawn</strong> 两种模式的，如果是后者，可能都不需要我写这个算子来解决了。</li>
+<li>当前是通过工厂函数&amp;懒加载的方案解决，我其实还在寻求更方便的模式，即使我已经写了一个工厂函数的utils，但还是没有commit，我觉得参数传递还是一个很大的问题，暂时没有找到很好的方案。</li>
+<li>并没有做内存占用的测试，这个应该如何进行？</li>
+</ol>
+<hr>
+<p>至此，恭喜一下自己🎉，完成了一个鲁棒性不错，功能支持丰富的 nebula-pyg，至少我觉得比 KUZU 丰富一些。</p>
+<h2 id="余音">余音
+</h2><p>写到这里，技术上的流水写完了。脑子里还有很多生活上以及后续的流水。</p>
+<p>非常感谢wey-gu老师，我还是想写写感谢在哪哈哈。</p>
+<p>就按时间线来讲吧，最开始我真的很害怕，因为我完全不知道 wey-gu老师 是怎么样的人，我的印象只有“怎么还不回我邮件”，“我真的要压上我全部家当在这个项目上吗？”。
+这么焦虑的原因，可能也是因为我是很在意合作体验的人，我非常乐意请教合作，前提是，我内心要先认同，类似那种不能接受完全不熟的人来，如果这样，我会自己封闭自己，可能是infj的专属了。</p>
+<p>当加上了X进行简单交流以后，包括线上的一次见面会，我突然发现 WoW，好厉害，我真的能和这么厉害的人合作吗（直接怯战）。</p>
+<p>通过 iyear 的建议，努力给自己刷点存在感，做一些项目的前期调研，刷刷issue，有机会最好来几个PR，狠狠的补自己的项目书，也是不枉努力！</p>
+<p>直到下一件事发生前，我都会觉得，这个 mentor 非常的忙，但也很自由。自由的点在于我在想自己要不要做点日报，周报之类的，wey-gu老师 的反应，就是无所谓，这些都是冗余的。
+忙在于，找他的第一时间都是忙的哈哈。</p>
+<p>下一件事就是搭环境。其实这里心态已经崩溃了，我弄了一个多星期，竟然连环境都没搞定，我都不知道怎么开发。不过好消息是，wey-gu老师 直接就和我视频会议。
+知道我还卡在这里了以后，先是给我解释了 nebulagraph 的框架，以及项目开发的大致方向，然后花了将近两小时，远程帮我配好了环境！并在过程中给我讲了很多我不知道的知识，技巧。</p>
+<p>打心底我对远程这个事情还是害怕的，一个是每次找 iyear 的时候，大部分情况的第一回答就是“远程解决不了”，而我在帮别人的时候，也会感受到远程的无力感。所以这次是小小的心灵感受到了充分的温暖哈哈。事后，我还狠狠的和 Hera 姐夸了。</p>
+<p>好像这件事之后，我们再也没有视频过了，一些问题也就是能很简单的通过电话以及文字解决（原来第一段视频远程是最后一段视频远程）。</p>
+<p>七月底，正好因为 VISA 的事，去了趟上海，（偷偷说Hera姐也很支持我去约饭）成功约上老师吃饭。当时也不是饭点，其实应该是我狠狠的在吃，老师我猜当时也不是很饿，陪我聊了两个小时。
+对于我来说，真的收获了很多，见到了一些我曾经不知道的模式，更了解开源社区，之后，就会每天在X上闲逛，感觉这里面的人都好精彩。</p>
+<p>VISA的事真的很糟心，那几天的开发感觉就停滞了，后续也不见得进度快起来。老师也安慰了我挺多，但记住的就这样一句话，大概意思是，每天的活力有很多，不必为了这种结果不在你控制范围内的事消耗掉它，你还能用它去创造很多东西！</p>
+<p>突然觉得写到这也差不多，不必事无巨细，其他的，也就是会经常给我share一些开源的工作和工具，真的都很amazing。</p>
+<p>Hera姐也是人美心善的姐姐哈哈，因为（内心同意）这个问题，我就很想跑到余杭去看看 nebula 公司的情况，被Hera姐热情招待了！</p>
+<p>等我写完这个项目再回头看，项目真的不大，几千行的代码，甚至核心代码我感觉在2000行以内，剩下的都是 example，test和doc。但远远比之前写 CRUD 的成就感强多了。
+包括但不限于学会以及更加了解 python，docker-compose，WSL，pdm等等，还有更强的独立思考，讨论，设计解决方案的能力（至少我现在是很骄傲的），探索各种工具的能力以及对开源社区充满了更多的好奇感，还给社区做出了1行代码的PR。</p>
+<p>戛然而止一下，再来换个话题哈哈。当这个项目真正步入尾声，内心还是些许沮丧的，当然也有开心的点！至少要结束了哈哈（不过不知道后续的维护压力大不大）。
+我总是害怕自己从一个环境换到另一个环境，所以项目进入尾声的时候，就意味着，当下从非舒适圈到舒适圈的环境，又要变成了新的“非舒适圈”。</p>
+<p>此外，当再此听到需要将 repo 捐赠给社区的时候，兴奋带有少许难过。我记得 wey-gu老师 第一次和我说 repo 要捐给社区的的时候，真的非常愉悦，哇，我的 repo 也能被社区接受。
+而现在的感觉是感觉像是自己养了两个月的，就要走了。BTW，其实开发中期的时候，一直觉得自己的代码很lese，也不会有人用，同类产品都有 KUZU了，为什么还会接受我的呢？
+只能说被 wey-gu 老师鼓励了一下，nebulagraph 的客户都非常的大牌哈哈。突然觉得捐给社区这一个更大的平台，它的未来会更好！</p>
+<p>突然想到一件尴尬的事，每次和 wey-gu老师 聊天的时候，都会狠狠带上您，我想这应该是我从体制教育，传统文化培养下的，“典型的尊重长辈”。
+然后就被点了——“不您的”，突然发现，您的疏远感确实好强，wey-gu老师 应该还是很乐意和我平等交流的。
+再引申到 iyear 和我提过一次，在社区里，你身份地位是最不被care的，不论是地位，不论年龄，不论国籍，都能和进行你平等的交流。</p>
+<p>That‘s ALL！虽然我也不知道写完了没，但已经想睡觉了哈哈</p>
+<hr>
+<p>2025-08-18 03:58AM</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/nebulagraph/">NebulaGraph</a>
+        
+            <a href="/tags/pyg/">PyG</a>
+        
+            <a href="/tags/gnn/">GNN</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Fengze&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        
+            Hello <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.3b53827aa96bc7bc72df8fea494032d62ffd306d66f68e4e2178278d0f85605e.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<hr style="margin-top: 2rem; border: none; height: 4px;
+    background: linear-gradient(90deg, #ff7a18, #af002d, #319197);">
+
+<div style="text-align:center; margin: .75rem 0 1.5rem; opacity:.8;">
+    Made with ❤️ by Fengze · 2025
+</div>
+
+<style>
+    #backToTop {
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        background: #ff7a18;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: none;
+        font-size: 20px;
+    }
+</style>
+
+<div id="backToTop">↑</div>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.onscroll = function() {
+        btn.style.display = window.scrollY > 200 ? 'block' : 'none';
+    };
+    btn.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>
+
+    </body>
+</html>

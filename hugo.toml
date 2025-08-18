@@ -1,0 +1,137 @@
+baseURL = 'https://github.com/Fengzdadi/Fengzdadi.github.io/'
+languageCode = 'en-us'
+title = "Fengze's Blog"
+theme = "hugo-theme-stack"
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+[params]
+mainSections = ["post", "note", "essay","photo"]
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+
+[permalinks]
+post  = "/blog/:year/:slug/"
+note  = "/notes/:year/:slug/"
+essay = "/essay/:year/:slug/"
+photos = "/photos/:year/:slug/"
+
+[params.dateFormat]
+published = "2006-01-02"
+lastUpdated = "2006-01-02 15:04"
+
+[params.sidebar]
+compact = false
+emoji = "🤔"
+subtitle = "一生一次少年游"
+[params.sidebar.avatar]
+enabled = true
+src = "img/avatar.png"
+
+[params.article]
+headingAnchor = false
+math = false
+toc = true
+readingTime = true
+[params.article.license]
+enabled = false
+default = "CC BY-NC-SA 4.0"
+
+[params.comments]
+enabled = false
+provider = "giscus"
+
+[params.widgets]
+
+[[params.widgets.homepage]]
+type = "search"
+params = {}
+
+[[params.widgets.homepage]]
+type = "categories"
+params = { limit = 8 }
+
+[[params.widgets.homepage]]
+type = "tag-cloud"
+params = { limit = 20 }
+
+[[params.widgets.homepage]]
+type = "archives"
+params = { limit = 5 }
+
+[[params.widgets.page]]
+type = "toc"
+params = {}
+
+[[params.widgets.page]]
+type = "tag-cloud"
+params = { limit = 15 }
+
+[[params.widgets.page]]
+type = "archives"
+params = { limit = 3 }
+
+[params.opengraph]
+[params.opengraph.twitter]
+site = "fengzecai"
+card = "summary_large_image"
+
+[params.colorScheme]
+default = "auto"
+toggle = true
+
+[params.footer]
+since = 2025
+customText = "Hello"
+
+[menu]
+[[menu.main]]
+identifier = "home"
+name = "Home"
+url = "/"
+weight = 1
+[menu.main.params]
+icon = "home"
+
+
+[[menu.main]]
+identifier = "archives"
+name = "Archives"
+url = "/archives/"
+weight = 2
+[menu.main.params]
+icon = "archives"
+
+[[menu.main]]
+identifier = "search"
+name = "Search"
+url = "/search/"
+weight = 2
+[menu.main.params]
+icon = "search"
+
+[[menu.main]]
+identifier = "link"
+name = "Link"
+url = "/link/"
+weight = 2
+[menu.main.params]
+icon = "link"
+
+[[menu.main]]
+identifier = "photos"
+name = "Photos"
+url = "/photos/"
+weight = 5
+[menu.main.params]
+icon = "photo"
+
+# 代码块高亮
+[markup]
+[markup.highlight]
+style = "rose-pine-dawn"  # 莫兰迪风格低饱和主题
+noClasses = false
+

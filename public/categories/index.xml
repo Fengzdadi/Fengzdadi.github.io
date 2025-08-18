@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Categories on Fengze&#39;s Blog</title>
+        <link>http://localhost:1313/categories/</link>
+        <description>Recent content in Categories on Fengze&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Mon, 18 Aug 2025 03:58:00 +0800</lastBuildDate><atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Tech</title>
+        <link>http://localhost:1313/categories/tech/</link>
+        <pubDate>Mon, 18 Aug 2025 03:58:00 +0800</pubDate>
+        
+        <guid>http://localhost:1313/categories/tech/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Life</title>
+        <link>http://localhost:1313/categories/life/</link>
+        <pubDate>Fri, 15 Aug 2025 20:00:00 +0800</pubDate>
+        
+        <guid>http://localhost:1313/categories/life/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

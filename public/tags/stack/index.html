@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一生一次少年游">
+<title>Tag: Stack - Fengze&#39;s Blog</title>
+
+<link rel='canonical' href='http://localhost:1313/tags/stack/'>
+
+<link rel="stylesheet" href="/scss/style.min.946cca6c6259ef94ac55abfae7c7bf3291ea3ed5eea17ef77500b257217c6710.css"><meta property='og:title' content="Tag: Stack - Fengze's Blog">
+<meta property='og:description' content="一生一次少年游">
+<meta property='og:url' content='http://localhost:1313/tags/stack/'>
+<meta property='og:site_name' content='Fengze&#39;s Blog'>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2025-08-18T03:58:00&#43;08:00 '/>
+<meta name="twitter:site" content="@fengzecai">
+    <meta name="twitter:creator" content="@fengzecai"><meta name="twitter:title" content="Tag: Stack - Fengze's Blog">
+<meta name="twitter:description" content="一生一次少年游"><link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/tags/stack/index.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
+
+<style>
+    :root {
+        --article-font-family: "Merriweather", var(--base-font-family);
+    }
+</style>
+
+<style>
+     
+    blockquote {
+        border-left: 4px solid #a3a59b;  
+        padding-left: 1rem;
+        background: rgba(163, 165, 155, 0.08);  
+        font-style: italic;
+        color: #555;
+    }
+</style>
+
+
+<div style="
+  border-top: 5px solid transparent;
+  border-image: linear-gradient(to right, #c8c2bc, #b6b0a9, #a3a59b) 1;
+"></div>
+
+<style>
+     
+    .photo-grid { display: grid; gap: 12px; }
+    .photo-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .photo-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .photo-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 900px) {
+        .photo-grid.cols-3, .photo-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    .photo-grid .photo img {
+        width: 100%; height: auto; display: block; border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+         
+        filter: saturate(0.92) hue-rotate(-6deg);
+    }
+    .photo-grid .photo:hover img {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    .albums {
+        display: grid; gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 1024px) { .albums { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .albums { grid-template-columns: 1fr; } }
+    .album-card {
+        border-radius: 14px; overflow: hidden; display: block; text-decoration: none;
+        background: #f4f2ef;  
+        box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+    }
+    .album-card img { width: 100%; height: auto; display: block; }
+    .album-meta { padding: 12px 14px; }
+    .album-meta h3 { margin: 0 0 4px; color: #444; }
+    .album-meta .muted { color: #7a7a7a; font-size: .9rem; }
+</style>
+
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_ce0998b4578d41af.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🤔</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Fengze&#39;s Blog</a></h1>
+            <h2 class="site-description">一生一次少年游</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M590.624 950.481v-261.76h-156.92v262.021h-7.169c-75.027 0-150.054 0.014-225.081-0.008-26.163-0.008-42.731-18.607-42.733-47.9-0.002-106.427 0.047-212.855-0.107-319.282-0.01-6.082 1.72-9.945 5.908-13.788 114.58-105.085 229.054-210.323 343.55-315.526 1.243-1.14 2.556-2.18 4.156-3.54 16.806 15.435 33.502 30.747 50.177 46.086C661.723 388.136 761.02 479.51 860.41 570.757c3.503 3.216 4.992 6.453 4.988 11.519-0.11 107.568-0.036 215.134-0.111 322.702-0.019 26.257-17.041 45.644-40.45 45.697-76.663 0.172-153.325 0.066-229.987 0.055-1.192 0-2.386-0.135-4.226-0.249z"  /><path fill="#8a8a8a" d="M511.97 190.317c-38.127 35.441-75.794 70.457-113.464 105.468C295.984 391.063 193.467 486.35 90.923 581.599c-12.757 11.847-23.113 10.808-33.798-3.239-11.236-14.77-22.445-29.566-33.556-44.453-9.033-12.105-8.037-24.68 2.718-34.67 146.19-135.803 292.377-271.611 438.617-407.346 27.331-25.37 67.37-24.792 95.408 1.213 37.397 34.684 74.69 69.508 112.033 104.264 11.58 10.777 23.179 21.526 36 33.432v-8.517c0-40.573-0.011-49.643 0-90.215 0.005-17.322 6.864-24.944 22.456-24.952 36.803-0.015 73.607-0.008 110.41-0.015 17.612-0.001 24.102 7.155 24.103 26.676 0.007 88.665 0.064 145.83-0.132 234.496-0.015 6.12 1.76 9.976 5.863 13.756 42.245 38.876 84.356 77.932 126.506 116.937 10.804 9.998 11.996 22.402 2.994 34.564-11.577 15.643-23.262 31.188-35.097 46.585-9.183 11.946-20.214 12.846-31.132 2.699-93.098-86.52-186.168-173.075-279.245-259.622-46.46-43.202-92.916-86.41-139.378-129.611-1.08-1.004-2.21-1.943-3.723-3.264z"  /></svg>
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M923.26 901.592H101.003c-8.49 0-15.71-6.235-16.93-14.64L9.448 376.806a17.157 17.157 0 0 1 3.978-13.671 17.146 17.146 0 0 1 12.953-5.916H997.9c4.964 0 9.693 2.155 12.953 5.916a17.157 17.157 0 0 1 3.977 13.67l-74.64 510.145c-1.22 8.406-8.44 14.64-16.93 14.64z m-807.466-34.228H908.47l69.626-475.917H46.185l69.609 475.917z m791.522-547.681c-9.46 0-17.114-7.655-17.114-17.115v-31.571c0-8.707-7.487-15.778-16.696-15.778H316.851a17.09 17.09 0 0 1-16.112-11.365c-14.473-40.529-32.974-79.603-41.849-88.778H153.9c-9.21 0-16.713 7.069-16.713 15.76v131.73c0 9.46-7.655 17.115-17.115 17.115-9.46 0-17.114-7.654-17.114-17.114V170.838c0-27.56 22.846-49.988 50.94-49.988h108.6c8.858 0 29.198 0 66.334 100.144h544.673c28.078 0 50.923 22.43 50.923 50.005v31.571c0.002 9.458-7.653 17.113-17.112 17.113z"  /><path fill="#8a8a8a" d="M660.3 563.959H326.543c-9.46 0-17.115-7.655-17.115-17.115s7.655-17.114 17.115-17.114H660.3c9.46 0 17.115 7.654 17.115 17.114s-7.655 17.115-17.114 17.115z"  /></svg>
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/link/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M330.44 727.39c-7.686 0-15.339-2.905-21.213-8.779-11.715-11.715-11.715-30.71 0-42.425l363.331-366.174c11.715-11.715 30.679-11.715 42.394 0s11.715 30.71 0 42.425L351.621 718.611c-5.811 5.873-13.496 8.779-21.181 8.779z m147.707-72.666c9.904 43.706-0.781 86.6-34.553 120.371l-121.12 117.372c-25.493 25.493-59.358 39.519-95.441 39.519-36.052 0-69.948-14.027-95.409-39.519-52.61-52.641-52.61-138.272-0.312-190.569L249.621 579.84c25.493-25.492 59.389-39.551 95.441-39.551 12.34 0 24.18 2.218 35.77 5.405l46.83-46.83c-26.118-12.216-54.328-18.557-82.601-18.557-49.892 0-99.783 19.026-137.866 57.108L89.167 659.192c-76.134 76.134-76.134 199.536 0 275.701 38.051 38.082 87.943 57.077 137.835 57.077 49.892 0 99.783-18.995 137.835-57.077l120.871-117.122c58.202-58.202 70.823-139.365 39.957-210.594l-47.517 47.548zM934.826 89.108C896.744 51.026 846.883 32 796.991 32s-99.815 19.026-137.866 57.108l-120.84 117.091c-60.357 60.357-72.667 150.394-37.301 223.091l46.549-46.518c-13.777-46.018-3.218-97.784 32.865-133.867l121.12-117.372c25.493-25.462 59.358-39.519 95.441-39.519 36.021 0 69.948 14.059 95.441 39.519 52.61 52.641 52.61 138.272 0.281 190.6l-121.12 121.12c-25.493 25.493-59.389 39.519-95.441 39.519-9.185 0-17.276 0.906-26.086-0.875l-47.768 47.798c23.868 9.904 48.392 13.058 73.853 13.058 49.892 0 99.752-19.026 137.835-57.108l120.84-120.84c76.165-76.134 76.165-199.567 0.031-275.701z"  /></svg>
+                
+                <span>Link</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M937.728 838.554l-214.22-216.018c-2.494-2.5-5.249-4.409-7.88-6.488 36.187-55.987 57.317-122.675 57.317-194.508 0-197.347-158.627-357.303-354.43-357.303-195.694 0-354.43 159.957-354.43 357.303 0 197.374 158.736 357.295 354.43 357.295 71.227 0 137.455-21.358 193.076-57.846 2.026 2.714 3.884 5.413 6.337 7.893l214.248 216.045c14.628 14.703 33.678 22.032 52.757 22.032 19.091 0 38.155-7.328 52.77-21.998 29.103-29.409 29.103-77.02 0.025-106.407M418.515 666.008c-133.681 0-242.499-109.685-242.499-244.468 0-134.763 108.819-244.476 242.499-244.476S661.014 286.777 661.014 421.54c0 134.782-108.819 244.468-242.5 244.468"  /></svg>
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/photos/' >
+                
+                
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1755274928559" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3519" data-spm-anchor-id="a313x.search_index.0.i1.67653a81omMHpD" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M895.473765 127.981836 127.937834 127.981836c-35.322483 0-63.956637 28.634154-63.956637 63.956637l0 639.614469c0 35.322483 28.634154 63.956637 63.956637 63.956637l767.535931 0c35.322483 0 63.956637-28.634154 63.956637-63.956637L959.430402 191.938474C959.430402 156.61599 930.796248 127.981836 895.473765 127.981836zM159.66442 191.942567l704.08276 0c17.520025 0 31.722492 14.202467 31.722492 31.722492l0 390.218376L684.703387 393.113309c-6.221702-6.221702-14.383592-9.31618-22.538319-9.28855-8.153704-0.027629-16.316617 3.067872-22.538319 9.28855L409.426857 632.757295l-103.836927-51.628868c-5.464455-3.684926-11.663644-5.438872-17.792225-5.421476-8.138354-0.01535-16.281825 3.080152-22.491247 9.289574L127.941927 722.361055 127.941927 223.665059C127.941927 206.145034 142.144394 191.942567 159.66442 191.942567zM895.469672 799.826358c0 17.520025-14.202467 31.722492-31.722492 31.722492L159.66442 831.54885c-13.644765 0-25.27464-8.616238-29.753651-20.702508l164.476005-164.476005 102.55984 50.993394c5.669116 4.225231 12.426007 6.310729 19.172665 6.257517 9.833973 0.068562 19.518542-4.426823 25.742291-12.844539L664.9853 458.208886l230.484372 236.126882L895.469672 799.826358z" p-id="3520" fill="#8a8a8a"></path><path d="M287.843754 447.784466c52.986795 0 95.941096-42.954301 95.941096-95.941096s-42.954301-95.941096-95.941096-95.941096c-52.986795 0-95.941096 42.954301-95.941096 95.941096S234.856959 447.784466 287.843754 447.784466zM287.843754 319.863005c17.662265 0 31.980365 14.3181 31.980365 31.980365s-14.3181 31.980365-31.980365 31.980365c-17.662265 0-31.980365-14.3181-31.980365-31.980365S270.181489 319.863005 287.843754 319.863005z" p-id="3521" fill="#8a8a8a"></path></svg>
+                
+                <span>Photos</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                <form action="/search/" class="search-form widget" >
+        <p>
+            <label>Search</label>
+            <input name="keyword" required placeholder="Type something..." />
+        
+            <button title="Search">
+                <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="200px" height="200.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M937.728 838.554l-214.22-216.018c-2.494-2.5-5.249-4.409-7.88-6.488 36.187-55.987 57.317-122.675 57.317-194.508 0-197.347-158.627-357.303-354.43-357.303-195.694 0-354.43 159.957-354.43 357.303 0 197.374 158.736 357.295 354.43 357.295 71.227 0 137.455-21.358 193.076-57.846 2.026 2.714 3.884 5.413 6.337 7.893l214.248 216.045c14.628 14.703 33.678 22.032 52.757 22.032 19.091 0 38.155-7.328 52.77-21.998 29.103-29.409 29.103-77.02 0.025-106.407M418.515 666.008c-133.681 0-242.499-109.685-242.499-244.468 0-134.763 108.819-244.476 242.499-244.476S661.014 286.777 661.014 421.54c0 134.782-108.819 244.468-242.5 244.468"  /></svg>
+            </button>
+        </p>
+    </form>
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">Categories</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/categories/life/" class="font_size_1">
+                Life
+            </a>
+        
+            <a href="/categories/tech/" class="font_size_1">
+                Tech
+            </a>
+        
+    </div>
+</section>
+
+            
+        
+            
+                <section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
+  <circle cx="9" cy="9" r="2" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">Tags</h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/tags/blog/" class="font_size_1">
+                Blog
+            </a>
+        
+            <a href="/tags/gnn/" class="font_size_1">
+                GNN
+            </a>
+        
+            <a href="/tags/hugo/" class="font_size_1">
+                Hugo
+            </a>
+        
+            <a href="/tags/nebulagraph/" class="font_size_1">
+                NebulaGraph
+            </a>
+        
+            <a href="/tags/pyg/" class="font_size_1">
+                PyG
+            </a>
+        
+            <a href="/tags/stack/" class="font_size_1">
+                Stack
+            </a>
+        
+    </div>
+</section>
+            
+        
+            
+                <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Archives</h2>
+
+        
+        
+        
+        
+        
+        <div class="widget-archive--list">
+            <div class="archives-year">
+                    <a href="/archives/#2025">
+                        
+                            <span class="year">2025</span>
+                            <span class="count">2</span>
+                        
+                    </a> 
+                </div>
+            
+        </div>
+    </section>
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <header>
+        <h3 class="section-title">
+            
+                Tags
+            
+        </h3>
+
+        <div class="section-card">
+            <div class="section-details">
+                <h3 class="section-count">1 page</h3>
+                <h1 class="section-term">Stack</h1>
+                
+            </div>
+        </div>
+    </header>
+    
+    <section class="article-list--compact">
+        
+            <article>
+    <a href="/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/">
+        <div class="article-details">
+            <h2 class="article-title">Hello, Stack：本站搭建记录与一些写作碎碎念</h2>
+            <footer class="article-time">
+                <time datetime='2025-08-15T20:00:00&#43;08:00'>2025-08-15</time>
+            </footer>
+        </div>
+            <div class="article-image">
+                <img src="/blog/2025/hello-stack%E6%9C%AC%E7%AB%99%E6%90%AD%E5%BB%BA%E8%AE%B0%E5%BD%95%E4%B8%8E%E4%B8%80%E4%BA%9B%E5%86%99%E4%BD%9C%E7%A2%8E%E7%A2%8E%E5%BF%B5/cover_hu_aa92abb80303d27d.png" 
+                        width="120"
+                        height="120" 
+                        alt="Hello, Stack：本站搭建记录与一些写作碎碎念"
+                        loading="lazy">
+                
+            </div>
+        
+    </a>
+</article>
+        
+    </section>
+<footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2025 Fengze&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        
+            Hello <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.3b53827aa96bc7bc72df8fea494032d62ffd306d66f68e4e2178278d0f85605e.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<hr style="margin-top: 2rem; border: none; height: 4px;
+    background: linear-gradient(90deg, #ff7a18, #af002d, #319197);">
+
+<div style="text-align:center; margin: .75rem 0 1.5rem; opacity:.8;">
+    Made with ❤️ by Fengze · 2025
+</div>
+
+<style>
+    #backToTop {
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        background: #ff7a18;
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: none;
+        font-size: 20px;
+    }
+</style>
+
+<div id="backToTop">↑</div>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.onscroll = function() {
+        btn.style.display = window.scrollY > 200 ? 'block' : 'none';
+    };
+    btn.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>
+
+    </body>
+</html>

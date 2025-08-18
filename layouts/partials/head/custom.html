@@ -1,0 +1,65 @@
+<!-- 加载 Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- 使用 Merriweather 作为文章正文字体 -->
+<style>
+    :root {
+        --article-font-family: "Merriweather", var(--base-font-family);
+    }
+</style>
+
+<style>
+    /* 引用块莫兰迪风格 */
+    blockquote {
+        border-left: 4px solid #a3a59b; /* 暖灰绿边框 */
+        padding-left: 1rem;
+        background: rgba(163, 165, 155, 0.08); /* 低饱和背景 */
+        font-style: italic;
+        color: #555;
+    }
+</style>
+
+<!-- layouts/partials/header/custom.html -->
+<div style="
+  border-top: 5px solid transparent;
+  border-image: linear-gradient(to right, #c8c2bc, #b6b0a9, #a3a59b) 1;
+"></div>
+
+<style>
+    /* 相册网格 */
+    .photo-grid { display: grid; gap: 12px; }
+    .photo-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .photo-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .photo-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 900px) {
+        .photo-grid.cols-3, .photo-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    .photo-grid .photo img {
+        width: 100%; height: auto; display: block; border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        /* 莫兰迪轻微去饱和+冷灰色调 */
+        filter: saturate(0.92) hue-rotate(-6deg);
+    }
+    .photo-grid .photo:hover img {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    .albums {
+        display: grid; gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 1024px) { .albums { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .albums { grid-template-columns: 1fr; } }
+    .album-card {
+        border-radius: 14px; overflow: hidden; display: block; text-decoration: none;
+        background: #f4f2ef; /* 莫兰迪浅米灰 */
+        box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+    }
+    .album-card img { width: 100%; height: auto; display: block; }
+    .album-meta { padding: 12px 14px; }
+    .album-meta h3 { margin: 0 0 4px; color: #444; }
+    .album-meta .muted { color: #7a7a7a; font-size: .9rem; }
+</style>

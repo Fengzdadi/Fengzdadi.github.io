@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{{ define "main" }}
+<section class="albums">
+    {{ range .Pages.ByDate.Reverse }}
+    {{ $cover := cond (isset .Params "cover") (.Resources.GetMatch .Params.cover) (index (.Resources.ByType "image") 0) }}
+    {{ $thumb := cond $cover ($cover.Fill "1200x750 q75 Center") nil }}
+    <a class="album-card" href="{{ .RelPermalink }}">
+        {{ if $thumb }}
+        <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" />
+        {{ end }}
+        <div class="album-meta">
+            <h3>{{ .Title }}</h3>
+            <div class="muted">
+                {{ .Date.Format "2006-01-02" }} · {{ len (.Resources.ByType "image") }} 张
+            </div>
+        </div>
+    </a>
+    {{ end }}
+</section>
+{{ end }}
