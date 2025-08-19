@@ -36,9 +36,9 @@ image = "cover.png"
 接着就是长时间的等待结果了。录取！
 
 ## 设计
-这个项目的设计，整体上是参考了 [KUZU](https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/) 所做的，给PyG做 remorte 适配的工作。
+这个项目的设计，整体上是参考了 [KUZU](https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/) 所做的，给 PyG 做 remote 适配的工作。
 
-大体框架上是相同的，写到后面的一些处理，会因为 nebulagraph 的特性做一些特殊处理。
+框架大体上是相同的，在细节上会因为 nebulagraph 的特性做一些特殊处理。
 
 ## 框架
 总的来说，比较核心的点是实现 PyG 中的 `FeatureStore` 和 `GraphStore` 这两个接口。
@@ -66,9 +66,9 @@ image = "cover.png"
 2. pdm 对 torch 的支持我觉得很一般，要自己进行配置，而且像 `torch-vision` 之类的包，确实出了很奇怪的安装意外。印象中这个问题可能普便存在，之前使用 `miniconda` 也出现过类似的问题。
 3. 经过调研，和 wey-gu 老师的讨论，现在 uv 差不多要一统天下了（哪天我也去试试）。
 
-第二个便是 nebulagraph 的环境。用 nebula-pyg 一个很重要的前提就是，storaged 可以被 python interpretation 直接访问，即两者需要在同一网络下。
-
-问题就出在了，目前社区版的 nebulagraph 并不支持这个功能。并且 nebulagraph 仅能在 [指定的 linux 环境下安装](https://docs.nebula-graph.com.cn/3.8.0/4.deployment-and-installation/1.resource-preparations/#_4)。
+第二个便是 nebulagraph 的环境。目前社区版的 nebulagraph 的 storaged 只能被同一网络下的 python interpretation 访问，不能被外部网路访问。
+这就导致使用 nebula-pyg 需要将两者 nebulagraph 和 nebula-pyg 所使用的 python interpretation 安装在同一网络下。
+并且 nebulagraph 仅能在 [指定的 linux 环境下安装](https://docs.nebula-graph.com.cn/3.8.0/4.deployment-and-installation/1.resource-preparations/#_4)。
 
 那用户使用 nebula-pyg就有两种情况：
 1. 使用 特定的 linux 系统，并在该环境下安装了 nebulagraph，解释器也运行在本地。
@@ -78,12 +78,12 @@ image = "cover.png"
 
 ### vid
 nebulagraph 的 [VID](https://docs.nebula-graph.com.cn/3.8.0/1.introduction/3.vid/) 支持 `FIXED_STRING(<N>)` 和 `INT64` 两种类型。
-而 PyG，对 edge_index 有 `{0,……，num_nodes-1}` 的[要求](https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html?highlight=only+hold+indice+range#:~:text=Note%20that%20it%20is%20necessary%20that%20the%20elements%20in%20edge_index%20only%20hold%20indices%20in%20the%20range%20%7B%200%2C%20...%2C%20num_nodes%20%2D%201%7D.)
+而 PyG，对 edge_index 有 `{0,……，num_nodes-1}` 的[要求](https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html?highlight=only+hold+indice+range#:~:text=Note%20that%20it%20is%20necessary%20that%20the%20elements%20in%20edge_index%20only%20hold%20indices%20in%20the%20range%20%7B%200%2C%20...%2C%20num_nodes%20%2D%201%7D.)。
 
-那这个转换到底要不要做呢，在 KUZU 的实现中，这个要求被留给了用户，用户在导入数据的时候，要求 index 必须满足上面的要求。
-现在反思过来看，这个问题交给用户，也是一个不错的方案。在后续测试的大多数数据集中，index 都被限制在了这个范围。
+那这个转换到底要不要做呢，在 KUZU 的实现中，这个问题被留给了用户，用户在导入数据的时候，要求 index 必须满足上面的要求。
+现在反思过来看，这个问题交给用户，也是一个不错的方案。仅从科研角度来看，市面上大多数的数据集中，index 都被限制在了这个范围。
 
-不过对于工业级别的数据，大多数都是基于一定规则的 uuid，或者基于 snowflake 生成的 id。特别是在分布式数据库中，大部分情况不会是自增的int。这个时候，VID 的映射就特别有必要了
+不过对于工业级别的数据，大多数都是基于一定规则的 uuid，或者基于 snowflake 生成的 id。特别是在分布式数据库中，大部分情况不会是自增的int。这个时候，VID 的映射就特别有必要了。
 
 在设计映射方案的时候，曾考虑过 KV-Cache，经过 wey-gu 老师的建议，主要结合了两个点：
 1. 考不考虑动态场景？这个的回答是不太需要，即使是工业级别，snapshot 做一个 subgraph，速度还是非常快的。
@@ -97,30 +97,30 @@ snapshot 产生的 pickle 文件 会包含有一下几个内容：
 + `vid_to_tag`：节点分类信息
 + `edge_type_groups`：三元组信息
 
-前面两个看似重复的反向设计并不是冗余，而是 dict 里面的 KV 对正向的查询更快，时间复杂度应该是 O(1)，如果在想通过 idx 去找 vid 的时候仅仅用 `vid_to_idx` ，时间复杂度就会到达 O(n)。
+前面两个看似重复的反向设计并不是冗余，而是 `dict` 里面的 KV 对正向的查询更快，时间复杂度应该是 O(1)，如果在想通过 idx 去找 vid 的时候仅仅用 `vid_to_idx` ，时间复杂度就会到达 O(n)。
 
 ### FeatureStore 的扫描策略
 
-大概在8月初的时候，我用了 nebulagraph 文档[规划 Schema](https://docs.nebula-graph.com.cn/3.8.0/nebula-studio/quick-start/st-ug-plan-schema/#schema)部分的示例数据集中的 basketballplayer 做完了所有的测试。
+大概在8月初的时候，我用了 nebulagraph 文档中 [规划 Schema](https://docs.nebula-graph.com.cn/3.8.0/nebula-studio/quick-start/st-ug-plan-schema/#schema) 部分的示例数据集 basketballplayer 做完了所有的测试。
 当全部测试跑通了以后，非常开心，已经早早的做下一步规划了。
 
 噩梦出现在决定做一个大规模数据集的案例。
 
-当时选用的是[ogbn-products](https://ogb.stanford.edu/docs/nodeprop/#ogbn-products)，我认为一个非常经典的例子。当我挂起他的时候，过了约莫一小时，并没有什么动静。
+当时选用的是 [ogbn-products](https://ogb.stanford.edu/docs/nodeprop/#ogbn-products)，我认为一个非常经典的例子。当我挂起他的时候，过了约莫一小时，并没有什么动静。
 在当时的我看来应该是性能问题，可能会考虑到 WSL I/O，以及自己电脑性能。
 
-在出去玩完约莫七个小时回到家后，看到还是一成不变的进度，我惊呆了，2,449,029个 NODE 在我印象中并不会出现这么严重的性能问题，七个小时都读不完。
-但我仍对数据集大小保持怀疑态度，于是，使用了[ogbn-arxiv](https://ogb.stanford.edu/docs/nodeprop/#ogbn-arxiv)。并进行断点打印。
+出去玩完约莫七个小时回到家后，看到还是一成不变的进度，我惊呆了，2,449,029 个 NODE 在我印象中并不会出现这么严重的性能问题，七个小时都读不完。
+但我仍对数据集大小保持怀疑态度，于是，使用了[ogbn-arxiv](https://ogb.stanford.edu/docs/nodeprop/#ogbn-arxiv)。并进行断点打印，
 发现在读取数据中进行了无数轮次的`scan_vertex_async`。那这是怎回事？
 
-我最初对 `get_tensor` 的设计是调用 storaged 的 `scan_vertex_async`(这个接口也是我 PR 到 nebula-python 中的，好像暂时没有更新)。
+我最初对 `get_tensor` 的设计是调用 storaged 的 `scan_vertex_async`（这个接口也是我 PR 到 nebula-python 中的，好像暂时没有更新）。
 这个接口做的工作是对图进行全局扫描，获得全局数据中指定 tag 的指定 prop。但它少了一个功能，就是获取指定 index 中的点。我在设计中对这个点的处理是，通过比较所需的 index 和 scan 出来的全图的点，
 再将所需要点的 prop 进行返回。
 
 我们来重新理一下流程，就知道，到底是什么地方出问题了。PyG 在使用 `Neighborloader` 会先获取点的列表，根据 batch_size 这个参数，加载周围的点。
 例如 `batch_size = 32`。那就会从点的 List 里面获取 32 个点，然后再获取这 32 个点的邻点，将这些点作为一个 index，调用 `get_tensor`。
 
-在 ogbn-arxiv 中，这个数量大约为 600 多个。*进行 `get_tensor` 的次数一般由 feat 数量(这是我踩的另外一个坑[get_tensor 中的 x,y 处理](#get_tensor-中的-xy-处理))，和进行几轮epoch，几次batch训练决定的。*
+在 ogbn-arxiv 中，这个数量大约为 600 多个。*进行 `get_tensor` 的次数一般由 feat 数量（这是我踩的另外一个坑 [get_tensor 中的 x,y 处理](#get_tensor-中的-xy-处理)），和进行几轮 epoch，几次batch训练决定的。*
 所以使用 `scan_vertex_async` 这样的全局扫描接口，从数据集中获取数据，每次都会扫描出 169,343 Node，和实际仅需的 600 多个 Node 进行比较一下就会发现，这是性能上的极大浪费。
 
 这时，我们来比较一下 KUZU的处理方式 和 wey-gu 老师之前为 dgl 写的 [nebula-dgl](https://github.com/wey-gu/nebula-dgl)（刚刚才仔细的看了一下，之前只知道有这个项目哈哈哈）：
@@ -134,7 +134,7 @@ snapshot 产生的 pickle 文件 会包含有一下几个内容：
 第二个是，如果想实现这个功能，至少要做谓词求值、联合条件、选择最佳索引、回表取属性、聚合/去重/排序这些事情，从职责上来讲，这些都是 query 优化器的工作，最终还是应该由 graphd 来做。
 
 那最后也是在 wey-gu 老师的建议下，选择了 ngql 进行相关操作，并且 wey-gu老师有说，nebulagraph 对我描述的操作做了进一步的优化。
-通过后续的测试发现也是，在 100,000 个级别的点 fetch 中，能够在1.2-1.5s之内返回所有数据。
+通过后续的测试发现也是，在 100,000 个级别的点 fetch 中，能够在 1.2-1.5s 左右返回所有数据。
 
 最终的解决方案也很简单，使用 [fetch](https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/7.general-query-statements/4.fetch/) 语句查询即可。
 当然，还有 [match](https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/7.general-query-statements/2.match/) 方法。
@@ -160,13 +160,14 @@ PyG就会使用 128+1 次的 `get_tensor(attr=TensorAttr(group_name="paper", att
 
 我看了 KUZU 对这个问题的解决方法，其实就是没有方法哈哈哈。因为其要求用户导入的特征数据就为[多维度的 tensor float 类型](https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/#:~:text=x%3A%20128%2Ddimensional%20node%20features%20(so%20128%2Dsize%20float%20tensors))（应该是 vector 了）。
 
-这个问题现在就很明朗了，这个问题需要自己解决。因为 nebulagraph 并不支持 vector，更糟糕的是，也不支持[复合数据类型](https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/3.data-types/6.list/#:~:text=%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BE%8B%E5%A6%82%20List%E3%80%81Set%E3%80%81Map%EF%BC%89%E4%B8%8D%E8%83%BD%E5%AD%98%E5%82%A8%E4%B8%BA%E7%82%B9%E6%88%96%E8%BE%B9%E7%9A%84%E5%B1%9E%E6%80%A7%E3%80%82)（例如 List、Set、Map）。
+那那么解决这个问题的方案，就只能我们自己来想。
 
-所以在存数据的时候，和原来一样，还是 feat0-feat128 拥有 128列 的特征向量。
+因为 nebulagraph 并不支持 vector，更糟糕的是，也不支持[复合数据类型](https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/3.data-types/6.list/#:~:text=%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BE%8B%E5%A6%82%20List%E3%80%81Set%E3%80%81Map%EF%BC%89%E4%B8%8D%E8%83%BD%E5%AD%98%E5%82%A8%E4%B8%BA%E7%82%B9%E6%88%96%E8%BE%B9%E7%9A%84%E5%B1%9E%E6%80%A7%E3%80%82)（例如 List、Set、Map）。
+所以在存数据的时候，和原来一样，只能存入 feat0-feat128 这样 128列 的特征向量。
 
 那第一个问题，就是这个 `feature` 的合成以及 `label` 的转换过程是由 nebula-pyg 来处理，还是用户自行处理。
 
-先来处理简单的，也就是 label。这个我觉得 nebula-pyg 处理并不会很复杂，并且可以帮用户直接解决。
+先来处理简单的，也就是 label。这个我认为在 nebula-pyg 中并不是很难解决的问题。
 
 为此，我引入了 `Y_CANDIDATES` 这个常量，默认了 `label`，`y`，`target`，`category` 这几个标签为 `data.y` 的标签。
 在读取的过程中，能够直接将这个几个标签的特征量转换为 `data.y`。
@@ -217,14 +218,14 @@ nebulagraph 的 `session` 并不安全，即使 nebula-python 还专门实现了
 非常感谢wey-gu老师，我还是想写写感谢在哪哈哈。
 
 就按时间线来讲吧，最开始我真的很害怕，因为我完全不知道 wey-gu老师 是怎么样的人，我的印象只有“怎么还不回我邮件”，“我真的要压上我全部家当在这个项目上吗？”。
-这么焦虑的原因，可能也是因为我是很在意合作体验的人，我非常乐意请教合作，前提是，我内心要先认同，类似那种不能接受完全不熟的人来，如果这样，我会自己封闭自己，可能是infj的专属了。
+这么焦虑的原因，可能也是因为我是很在意合作体验的人，我非常乐意请教合作，前提是，我内心要先认同，就是那种不能接受完全不熟的人来，如果这样，我会自己封闭自己，可能是 infj 的专属了。
 
 当加上了X进行简单交流以后，包括线上的一次见面会，我突然发现 WoW，好厉害，我真的能和这么厉害的人合作吗（直接怯战）。
 
 通过 iyear 的建议，努力给自己刷点存在感，做一些项目的前期调研，刷刷issue，有机会最好来几个PR，狠狠的补自己的项目书，也是不枉努力！
 
 直到下一件事发生前，我都会觉得，这个 mentor 非常的忙，但也很自由。自由的点在于我在想自己要不要做点日报，周报之类的，wey-gu老师 的反应，就是无所谓，这些都是冗余的。
-忙在于，找他的第一时间都是忙的哈哈。
+忙在于，好像就是很忙哈哈。
 
 下一件事就是搭环境。其实这里心态已经崩溃了，我弄了一个多星期，竟然连环境都没搞定，我都不知道怎么开发。不过好消息是，wey-gu老师 直接就和我视频会议。
 知道我还卡在这里了以后，先是给我解释了 nebulagraph 的框架，以及项目开发的大致方向，然后花了将近两小时，远程帮我配好了环境！并在过程中给我讲了很多我不知道的知识，技巧。
