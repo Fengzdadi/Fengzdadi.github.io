@@ -149,7 +149,7 @@ PyG就会使用 128+1 次的 &lt;code&gt;get_tensor(attr=TensorAttr(group_name=&
 &lt;p&gt;（看别人的处理方法真的能学到很多）&lt;/p&gt;
 &lt;p&gt;我看了 KUZU 对这个问题的解决方法，其实就是没有方法哈哈哈。因为其要求用户导入的特征数据就为&lt;a class=&#34;link&#34; href=&#34;https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/#:~:text=x%3A%20128%2Ddimensional%20node%20features%20%28so%20128%2Dsize%20float%20tensors%29&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;多维度的 tensor float 类型&lt;/a&gt;（应该是 vector 了）。&lt;/p&gt;
-&lt;p&gt;那那么解决这个问题的方案，就只能我们自己来想。&lt;/p&gt;
+&lt;p&gt;那么解决这个问题的方案，就只能我们自己来想。&lt;/p&gt;
 &lt;p&gt;因为 nebulagraph 并不支持 vector，更糟糕的是，也不支持&lt;a class=&#34;link&#34; href=&#34;https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/3.data-types/6.list/#:~:text=%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BE%8B%E5%A6%82%20List%E3%80%81Set%E3%80%81Map%EF%BC%89%E4%B8%8D%E8%83%BD%E5%AD%98%E5%82%A8%E4%B8%BA%E7%82%B9%E6%88%96%E8%BE%B9%E7%9A%84%E5%B1%9E%E6%80%A7%E3%80%82&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;复合数据类型&lt;/a&gt;（例如 List、Set、Map）。
 所以在存数据的时候，和原来一样，只能存入 feat0-feat128 这样 128列 的特征向量。&lt;/p&gt;
@@ -217,6 +217,55 @@ PyG就会使用 128+1 次的 &lt;code&gt;get_tensor(attr=TensorAttr(group_name=&
 &lt;p&gt;That‘s ALL！虽然我也不知道写完了没，但已经想睡觉了哈哈&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;2025-08-18 03:58AM&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>About Me</title>
+        <link>http://localhost:1313/about/</link>
+        <pubDate>Sat, 16 Aug 2025 10:00:00 +0800</pubDate>
+        
+        <guid>http://localhost:1313/about/</guid>
+        <description>&lt;p&gt;Hi, I&amp;rsquo;m &lt;strong&gt;Fengze&lt;/strong&gt;.
+This is where I record my daily notes, random thoughts, and photography.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m particularly interested in graph-related areas and consider myself a strong scraper.&lt;/p&gt;
+&lt;p&gt;My primary development languages are Python and Go.&lt;/p&gt;
+&lt;p&gt;In the future, I&amp;rsquo;d like to work on smart city projects.&lt;/p&gt;
+&lt;h2 id=&#34;now-doing&#34;&gt;Now doing
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;NebulaGraph × PyG&lt;/li&gt;
+&lt;li&gt;Wait for VISA&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;learning-experience&#34;&gt;Learning experience
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;2021-2025 · Hangzhou Dianzi University, Zhuoyue Honors College, Intelligent Computing and Data Science, Bachelor&amp;rsquo;s Degree&lt;/li&gt;
+&lt;li&gt;2018–2021 · Zhejiang Wenzhou High School&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;project&#34;&gt;project
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/Fengzdadi/nebula-pyg&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;NebulaPyG&lt;/strong&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;A Python library that connects NebulaGraph and PyTorch Geometric (PyG)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/Fengzdadi/Cerebral-Palsy-Detection-System&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;strong&gt;CPDS: Infantile cerebral palsy detection system&lt;/strong&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;This is a software for CPDS (Cerebral Palsy Detection System) which is a system that can detect cerebral palsy in infants.
+Received support in key areas of the National Project for College Students’ Innovation and Entrepreneurship&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;research&#34;&gt;research
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;2025 · DirHetGCL: Directional Heterogeneous Graph Contrastive Learning Method for Social Bot Detection&lt;/li&gt;
+&lt;li&gt;2023 · &lt;a class=&#34;link&#34; href=&#34;https://www.mdpi.com/2079-9292/12/11/2429&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;REEGAT: RoBERTa Entity Embedding and Graph Attention Networks Enhanced Sentence Representation for Relation Extraction&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;##ß connect me&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GitHub：&lt;a class=&#34;link&#34; href=&#34;https://github.com/Fengzdadi&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@Fengzdadi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Email：fengzcw@gmail.com&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         <item>

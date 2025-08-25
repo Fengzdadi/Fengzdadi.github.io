@@ -160,7 +160,7 @@ PyG就会使用 128+1 次的 `get_tensor(attr=TensorAttr(group_name="paper", att
 
 我看了 KUZU 对这个问题的解决方法，其实就是没有方法哈哈哈。因为其要求用户导入的特征数据就为[多维度的 tensor float 类型](https://blog.kuzudb.com/post/kuzu-pyg-remote-backend/#:~:text=x%3A%20128%2Ddimensional%20node%20features%20(so%20128%2Dsize%20float%20tensors))（应该是 vector 了）。
 
-那那么解决这个问题的方案，就只能我们自己来想。
+那么解决这个问题的方案，就只能我们自己来想。
 
 因为 nebulagraph 并不支持 vector，更糟糕的是，也不支持[复合数据类型](https://docs.nebula-graph.com.cn/3.8.0/3.ngql-guide/3.data-types/6.list/#:~:text=%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88%E4%BE%8B%E5%A6%82%20List%E3%80%81Set%E3%80%81Map%EF%BC%89%E4%B8%8D%E8%83%BD%E5%AD%98%E5%82%A8%E4%B8%BA%E7%82%B9%E6%88%96%E8%BE%B9%E7%9A%84%E5%B1%9E%E6%80%A7%E3%80%82)（例如 List、Set、Map）。
 所以在存数据的时候，和原来一样，只能存入 feat0-feat128 这样 128列 的特征向量。

@@ -96,6 +96,30 @@ weight = 1
 [menu.main.params]
 icon = "home"
 
+[[menu.social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/Fengzdadi"
+weight = 1
+[menu.social.params]
+icon = "brand-github"
+
+#[[menu.social]]
+#identifier = "twitter"
+#name = "X"
+#url = "https://twitter.com/你的账号"
+#weight = 2
+#[menu.social.params]
+#icon = "brand-twitter"
+
+[[menu.social]]
+identifier = "email"
+name = "Email"
+url = "fengzcw@gmail.com"
+weight = 8
+[menu.social.params]
+icon = "mail"
+
 
 [[menu.main]]
 identifier = "archives"
@@ -109,7 +133,7 @@ icon = "archives"
 identifier = "search"
 name = "Search"
 url = "/search/"
-weight = 2
+weight = 3
 [menu.main.params]
 icon = "search"
 
@@ -117,7 +141,7 @@ icon = "search"
 identifier = "link"
 name = "Link"
 url = "/link/"
-weight = 2
+weight = 4
 [menu.main.params]
 icon = "link"
 
@@ -128,6 +152,14 @@ url = "/photos/"
 weight = 5
 [menu.main.params]
 icon = "photo"
+
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 6
+[menu.main.params]
+icon = "user"
 
 # 代码块高亮
 [markup]
